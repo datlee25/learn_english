@@ -1,5 +1,10 @@
-package com.example.learning_english.config;
+package com.example.learning_english.security;
 
+import com.example.learning_english.config.ApiAuthenticationFilter;
+import com.example.learning_english.security.jwt.AuthEntryPointJwt;
+import com.example.learning_english.security.jwt.AuthTokenFilter;
+import com.example.learning_english.exception.RestAuthenticationFailureHandler;
+import com.example.learning_english.security.services.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,56 +16,60 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private  UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
+
     @Autowired
-    private  PasswordEncoder bCryptPasswordEncoder;
+    private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
-    public WebMvcConfigurer configurer(){
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:3000");
-            }
-        };
+    public AuthTokenFilter authenticationJwtTokenFilter(){
+        return new AuthTokenFilter();
     }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //override default login path
         ApiAuthenticationFilter apiAuthenticationFilter = new ApiAuthenticationFilter(authenticationManager());
+        //set exception resolver
+        apiAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         apiAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
-        http.cors().and().csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http.authorizeRequests().antMatchers("/api/v1/register**", "/api/v1/login**", "/api/v1/token/refresh**").permitAll();
         http.authorizeRequests().antMatchers("/api/v1/users/**").hasAnyAuthority("user");
         //add requests path for more role here
         http.authorizeRequests().antMatchers("/api/v1/admin/**").hasAnyAuthority("admin");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(apiAuthenticationFilter);
-        http.addFilterBefore(new ApiAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    RestAuthenticationFailureHandler authenticationFailureHandler(){
+        return new RestAuthenticationFailureHandler();
     }
 
 }

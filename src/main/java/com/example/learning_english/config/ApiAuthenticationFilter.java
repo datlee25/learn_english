@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -31,8 +32,8 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.authenticationManager = authenticationManager;
     }
 
-    //this function is call first when user try to login with their user name and password
-    //so here we get username and password from request body then let spring do the magic
+    //this function is call first when user try to login with their user email and password
+    //so here we get useremail and password from request body then let spring do the magic
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -49,6 +50,23 @@ public class ApiAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return null;
         }
     }
+
+    //Xử lý UsernameNotFoundException bằng cách sự dụng unsuccessfulAuthentication
+//    @Override
+//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        ObjectMapper mapper = new ObjectMapper();
+//        ObjectNode message = mapper.createObjectNode();
+//        message.put("success", false);
+//        message.put("message", "Invalid credentials");
+//        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(message);
+//
+//        PrintWriter out = response.getWriter();
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        out.print(json);
+//        out.flush();
+//    }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {

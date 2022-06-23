@@ -1,4 +1,4 @@
-package com.example.learning_english.config;
+package com.example.learning_english.security.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.learning_english.util.JwtUtil;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-public class ApiAuthorizationFilter extends OncePerRequestFilter {
+public class AuthTokenFilter extends OncePerRequestFilter {
     public static final String[] IGNORE_PATHS = {"/api/v1/login", "/api/v1/register", "/api/v1/token/refresh"};
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

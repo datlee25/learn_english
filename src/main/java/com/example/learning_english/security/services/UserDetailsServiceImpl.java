@@ -1,12 +1,12 @@
-package com.example.learning_english.service;
+package com.example.learning_english.security.services;
 
 import com.example.learning_english.dto.AccountDto;
 import com.example.learning_english.dto.RegisterDto;
 import com.example.learning_english.entity.Account;
 import com.example.learning_english.entity.Role;
+import com.example.learning_english.entity.enums.ERole;
 import com.example.learning_english.repository.AccountRepository;
 import com.example.learning_english.repository.RoleRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,14 +26,14 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthenticationService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private  AccountRepository accountRepository;
+    private AccountRepository accountRepository;
     @Autowired
-    private  PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     @Autowired
-    private  RoleRepository roleRepository;
+    private RoleRepository roleRepository;
     private static final String USER_ROLE = "user";
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -41,26 +41,25 @@ public class AuthenticationService implements UserDetailsService {
         Account account = accountOptional.orElse(null);
 
         if(account == null){
-            throw new UsernameNotFoundException("User not fount in web");
+            throw new UsernameNotFoundException("User not found in web");
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add((new SimpleGrantedAuthority(account.getRole().getName())));
-        UserDetails userDetails = new User(account.getEmail(),account.getPassword(),authorities);
-        return userDetails;
+        authorities.add((new SimpleGrantedAuthority(account.getRole().getName().toString())));
+        return new User(account.getEmail(),account.getPassword(),authorities);
     }
 
     public AccountDto saveAccount(RegisterDto registerDto){
-        Optional<Role> roleOptional = roleRepository.findByName(USER_ROLE);
+        Optional<Role> roleOptional = roleRepository.findByName(ERole.ROLE_USER);
         Role userRole = roleOptional.orElse(null);
 
         if(userRole == null){
-            userRole = roleRepository.save(new Role(USER_ROLE));
+            userRole = roleRepository.save(new Role(ERole.ROLE_USER));
         }
 
         Optional<Account> optionalAccount = accountRepository.findByEmail(registerDto.getEmail());
 
-        if (!optionalAccount.isPresent()){
+        if (optionalAccount.isPresent()){
             return null;
         }
         Account account = new Account();
@@ -71,7 +70,6 @@ public class AuthenticationService implements UserDetailsService {
         account.setUpdateAt(LocalDateTime.now());
         account.setRole(userRole);
         account.setStatus(1);
-
         Account save = accountRepository.save(account);
         return new AccountDto(save);
 

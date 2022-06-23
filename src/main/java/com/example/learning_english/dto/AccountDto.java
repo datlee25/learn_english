@@ -19,7 +19,7 @@ public class AccountDto {
         this.id =account.getId();
         this.createdAt=account.getCreateAt();
         this.email=account.getEmail();
-        this.role=account.getRole().getName();
+        this.role=account.getRole().getName().toString();
         this.status=account.getStatus();
         this.updatedAt=account.getUpdateAt();
     }
