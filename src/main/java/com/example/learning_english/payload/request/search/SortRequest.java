@@ -1,4 +1,4 @@
-package com.example.learning_english.entity.search;
+package com.example.learning_english.payload.request.search;
 
 import com.example.learning_english.SearchCriteria.Operator;
 import com.example.learning_english.SearchCriteria.SortDirection;

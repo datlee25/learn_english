@@ -33,5 +33,14 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             this.errorMessage= error.getDefaultMessage();
         });
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.errorMessage);    }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.errorMessage);
+    }
+
+    //TOKEN
+    @ExceptionHandler(TokenRefreshException.class)
+    public ResponseEntity<Object> handleTokenException(
+            TokenRefreshException ex, WebRequest request
+    ){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).body(ex.getMessage());
+    }
 }

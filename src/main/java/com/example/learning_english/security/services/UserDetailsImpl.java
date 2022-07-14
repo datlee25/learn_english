@@ -1,6 +1,5 @@
 package com.example.learning_english.security.services;
 
-import com.example.learning_english.entity.Role;
 import com.example.learning_english.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +31,10 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
+    //TODO: Build a UserDetails
     public static UserDetailsImpl build(User user){
+
+        //convert Set<Role> into List<GrantedAuthority>
         List<GrantedAuthority> auth = user.getRoles()
                                         .stream()
                                         .map(role ->
@@ -60,6 +62,14 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

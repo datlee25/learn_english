@@ -1,14 +1,15 @@
 package com.example.learning_english.security.jwt;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.learning_english.util.JwtUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.learning_english.security.services.UserDetailsServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -19,6 +20,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
     public static final String[] IGNORE_PATHS = {"/api/v1/login", "/api/v1/register", "/api/v1/token/refresh"};
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,37 +38,27 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
-            return;
-        }
-
-        //get token in header then decode jwt token to get username and roles -> then set roles for request
         try {
-            String token = authorizationHeader.replace("Bearer", "").trim();
-            DecodedJWT decodedJWT = JwtUtil.getDecodedJwt(token);
-            String username = decodedJWT.getSubject();
-
-            String role= decodedJWT.getClaim(JwtUtil.ROLE_CLAIM_KEY).asString();
-
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-            authorities.add(new SimpleGrantedAuthority(role));
-
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(username, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            filterChain.doFilter(request, response);
-        } catch (Exception ex) {
-            //show error
-            System.err.println(ex.getMessage());
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            Map<String, String> errors = new HashMap<>();
-            errors.put("error", ex.getMessage());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            new ObjectMapper().writeValue(response.getOutputStream(), errors);
+            String jwt = parseJwt(request);
+            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                System.out.println("user name: " + username);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (Exception e) {
+            logger.error("Cannot set user authentication: {}", e);
         }
+        filterChain.doFilter(request, response);
+    }
+    private String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7, headerAuth.length());
+        }
+        return null;
     }
 }

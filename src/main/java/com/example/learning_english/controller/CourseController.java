@@ -2,15 +2,13 @@ package com.example.learning_english.controller;
 
 import com.example.learning_english.dto.CourseDto;
 import com.example.learning_english.entity.Course;
-import com.example.learning_english.entity.search.SearchRequest;
-import com.example.learning_english.exception.CourseNotFoundException;
+import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,11 +29,11 @@ public class CourseController {
     private String errorMessage;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Page<CourseDto>> findAll(
+    public ResponseEntity<Page<Course>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit){
         Page<CourseDto> courseDto =  courseService.findAll(page, limit).map(course -> modelMapper.map(course,CourseDto.class));
-        return  ResponseEntity.ok(courseDto);
+        return  ResponseEntity.ok(courseService.findAll(page, limit));
     }
 
     @RequestMapping(method = RequestMethod.GET, path="/{id}")
@@ -51,7 +49,8 @@ public class CourseController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<CourseDto> save(@Valid @RequestBody CourseDto courseDto){
-        Course course = new Course(courseDto);
+
+        Course course = modelMapper.map(courseDto,Course.class);
         Course res = courseService.save(course);
         CourseDto courseResponse = modelMapper.map(res, CourseDto.class);
         return ResponseEntity.ok(courseResponse);

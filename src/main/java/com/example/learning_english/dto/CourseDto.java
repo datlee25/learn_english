@@ -3,6 +3,7 @@ package com.example.learning_english.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 @Data
 public class CourseDto {
@@ -13,4 +14,7 @@ public class CourseDto {
     public int participantAge;
     public double qualification;
     public int number_of_participants;
+
+    public Set<String> exercises;
+
 }

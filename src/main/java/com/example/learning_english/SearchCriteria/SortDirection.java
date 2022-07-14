@@ -1,6 +1,6 @@
 package com.example.learning_english.SearchCriteria;
 
-import com.example.learning_english.entity.search.SortRequest;
+import com.example.learning_english.payload.request.search.SortRequest;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Order;

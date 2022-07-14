@@ -1,8 +1,8 @@
 package com.example.learning_english.specifications;
 
-import com.example.learning_english.entity.search.FilterRequest;
-import com.example.learning_english.entity.search.SearchRequest;
-import com.example.learning_english.entity.search.SortRequest;
+import com.example.learning_english.payload.request.search.FilterRequest;
+import com.example.learning_english.payload.request.search.SearchRequest;
+import com.example.learning_english.payload.request.search.SortRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 

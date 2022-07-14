@@ -1,6 +1,6 @@
 package com.example.learning_english.SearchCriteria;
 
-import com.example.learning_english.entity.search.FilterRequest;
+import com.example.learning_english.payload.request.search.FilterRequest;
 
 import javax.persistence.criteria.*;
 

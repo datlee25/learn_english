@@ -1,42 +1,43 @@
 package com.example.learning_english.entity;
 
 import com.example.learning_english.dto.CourseDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Entity
+@ToString
 @Table(name = "courses")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
+    private int id;
+
     @Column(nullable = false)
     @NotBlank(message = "Course title is mandatory")
-    public String title;
-    public String detail;
-    public String image;
-    public int participantAge;
-    public double qualification;
-    public int number_of_participants;
+    private String title;
 
-    public Course(CourseDto courseDto) {
-        this.title = courseDto.title;
-        this.detail = courseDto.detail;
-        this.image = courseDto.image;
-        this.participantAge = courseDto.participantAge;
-        this.qualification = courseDto.qualification;
-        this.number_of_participants = courseDto.number_of_participants;
-    }
-};
+    private String detail;
+
+    private String image;
+
+    private int participantAge;
+
+    private double qualification;
+
+    private int number_of_participants;
+
+    private double stars_rated;
+
+}
 
