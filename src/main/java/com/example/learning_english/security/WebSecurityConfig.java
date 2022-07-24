@@ -3,6 +3,9 @@ package com.example.learning_english.security;
 import com.example.learning_english.security.jwt.AuthEntryPointJwt;
 import com.example.learning_english.security.jwt.AuthTokenFilter;
 import com.example.learning_english.exception.RestAuthenticationFailureHandler;
+import com.example.learning_english.security.oauth2.CustomAuthenticationFailureHandler;
+import com.example.learning_english.security.oauth2.CustomAuthenticationSuccessHandler;
+import com.example.learning_english.security.oauth2.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,20 +46,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
+    @Autowired
+    private CustomOAuth2UserService oauthUserService;
+
+    @Autowired
+    private CustomAuthenticationFailureHandler failureHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/api/v1/register**", "/api/v1/login**", "/api/v1/token/refresh_**").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/register**", "/api/v1/login**", "/api/v1/token/refresh_**","/", "/oauth2/**").permitAll();
         http.authorizeRequests().antMatchers("/api/v1/users/**").hasAnyAuthority(String.valueOf(ROLE_USER));
         //add requests path for more role here
         http.authorizeRequests().antMatchers("/api/v1/admin/**").hasAnyAuthority(String.valueOf(ROLE_ADMIN));
-        http.authorizeRequests().anyRequest().authenticated();
 //        http.addFilter(apiAuthenticationFilter);
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
+                .loginPage("/login")
+                .userInfoEndpoint()
+                .userService(oauthUserService);
     }
+
 
     @Bean
     @Override

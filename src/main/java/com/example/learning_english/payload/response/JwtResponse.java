@@ -3,12 +3,14 @@ package com.example.learning_english.payload.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class JwtResponse {
     private String accessToken;
     private String type = "Bearer";

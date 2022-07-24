@@ -22,10 +22,12 @@ public class Exercise {
     private String question;
 
     private int course_id;
+
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "course_id", updatable = false, insertable = false)
     @JsonBackReference
     private Course course;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "exercise")
     private Set<Answer> answer;

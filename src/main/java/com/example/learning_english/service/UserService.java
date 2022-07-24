@@ -34,13 +34,20 @@ public class UserService {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return null;
         }
-        // Create new user's account
-        User user = new User(signupRequest.getUsername(),
-                passwordEncoder.encode(signupRequest.getPassword()),
-                signupRequest.getEmail());
 
+        String password = "";
+        // Create new user's account
+        if (signupRequest.getPassword() != null){
+            password = signupRequest.getPassword();
+
+        }
+        User user = new User(signupRequest.getUsername(),
+                passwordEncoder.encode(password),
+                signupRequest.getEmail());
         user.setCreateAt(LocalDateTime.now());
         user.setUpdateAt(LocalDateTime.now());
+
+
 
         Set<String> strRoles = signupRequest.getRole();
         Set<Role> roles = new HashSet<>();
