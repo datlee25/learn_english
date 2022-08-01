@@ -1,6 +1,10 @@
 package com.example.learning_english.entity;
 
 import com.example.learning_english.entity.base.BaseEntity;
+import com.example.learning_english.entity.enums.EAuthProvider;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,11 +25,30 @@ public class User extends BaseEntity {
     public String username;
     public String password;
     public String email;
+
     @ManyToMany(cascade = CascadeType.ALL )
     @JoinTable(name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     public Set<Role> roles = new HashSet<>();
+
+    //Cách 1:
+//    @OneToMany(mappedBy = "user")
+//    @JsonManagedReference
+//    private Set<GroupMember> groupMembers;
+
+    //Cách 2:
+
+    @ManyToMany(fetch = FetchType.LAZY,
+        cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+        },
+        mappedBy = "users")
+    @JsonIgnore
+    private Set<Group> groups = new HashSet<>();
+
+
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;

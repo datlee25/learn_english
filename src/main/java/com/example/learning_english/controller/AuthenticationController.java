@@ -1,5 +1,6 @@
 package com.example.learning_english.controller;
 
+import com.example.learning_english.entity.GooglePojo;
 import com.example.learning_english.entity.RefreshToken;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.exception.TokenRefreshException;
@@ -12,17 +13,23 @@ import com.example.learning_english.security.jwt.JwtUtils;
 import com.example.learning_english.security.services.RefreshTokenService;
 import com.example.learning_english.security.services.UserDetailsImpl;
 import com.example.learning_english.service.UserService;
+import com.example.learning_english.util.GoogleUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,21 +51,24 @@ public class AuthenticationController {
     @Autowired
     public PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private GoogleUtils googleUtils;
+
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String jwt = jwtUtils.generateJwtToken(userDetails.getEmail(),userDetails.getUsername());
+        String jwt = jwtUtils.generateJwtToken(userDetails.getEmail(), userDetails.getUsername());
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-        
+
         return ResponseEntity.ok(new JwtResponse(
                 jwt,
                 refreshToken.getToken(),
@@ -67,32 +77,64 @@ public class AuthenticationController {
                 roles));
     }
 
-    @RequestMapping(path ="register",method = RequestMethod.POST)
+    @RequestMapping(path = "register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@Valid @RequestBody SignupRequest signupRequest) {
         User user = userService.saveUser(signupRequest);
         return ResponseEntity.ok(user);
     }
 
     @RequestMapping(path = "/token/refresh_token", method = RequestMethod.POST)
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request){
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
 
         String refresh_token = request.getRefreshToken();
         Optional<RefreshToken> refreshToken = refreshTokenService.findByToken(refresh_token);
-        if (refreshToken.isPresent()){
+        if (refreshToken.isPresent()) {
             System.out.println("in ra refresh_token: " + refreshToken.get());
 
-        }else{
+        } else {
             System.out.println("khong co refreshToken: ");
         }
         return refreshTokenService.findByToken(refresh_token)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String accessToken = jwtUtils.generateJwtToken(user.getEmail(),user.getUsername());
+                    String accessToken = jwtUtils.generateJwtToken(user.getEmail(), user.getUsername());
                     return ResponseEntity.ok(
-                        new TokenRefreshResponse(accessToken, refresh_token)
+                            new TokenRefreshResponse(accessToken, refresh_token)
                     );
                 }).orElseThrow(() -> new TokenRefreshException(refresh_token,
                         "Refresh token is not in database!"));
+    }
+
+    @RequestMapping(path = "/login-google")
+    public ResponseEntity<?> loginGoogle(HttpServletRequest request) throws ClientProtocolException, IOException {
+        String code = request.getParameter("code");
+
+        String accessToken = googleUtils.getToken(code);
+        GooglePojo googlePojo = googleUtils.getUserInfo(accessToken);
+        UserDetails userDetail = googleUtils. buildUser(googlePojo);
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetail, null,
+                userDetail.getAuthorities());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(googlePojo.getEmail(), googlePojo.getName());
+
+        List<String> roles = userDetail.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        SignupRequest signupRequest = new SignupRequest(googlePojo.getName(), googlePojo.getEmail());
+        userService.saveUser(signupRequest);
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(1);
+        JwtResponse jwtResponse = new JwtResponse(
+                jwt,
+                refreshToken.getToken(),
+                googlePojo.getName(),
+                googlePojo.getEmail(),
+                roles);
+        return ResponseEntity.ok(jwtResponse);
     }
 }
