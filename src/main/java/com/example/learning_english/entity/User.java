@@ -25,6 +25,11 @@ public class User extends BaseEntity {
     public String username;
     public String password;
     public String email;
+    public String age;
+    public String qualification;
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+    private boolean enabled;
 
     @ManyToMany(cascade = CascadeType.ALL )
     @JoinTable(name = "user_roles",
@@ -48,10 +53,14 @@ public class User extends BaseEntity {
     @JsonIgnore
     private Set<Group> groups = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<UserScore> userScore;
 
-    public User(String username, String password, String email) {
+    public User(String username, String password, String email,boolean enabled) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.enabled =enabled;
     }
 }

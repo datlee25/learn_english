@@ -79,7 +79,7 @@ public class AuthenticationController {
 
     @RequestMapping(path = "register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@Valid @RequestBody SignupRequest signupRequest) {
-        User user = userService.saveUser(signupRequest);
+        User user = userService.register(signupRequest);
         return ResponseEntity.ok(user);
     }
 
@@ -126,7 +126,7 @@ public class AuthenticationController {
                 .collect(Collectors.toList());
 
         SignupRequest signupRequest = new SignupRequest(googlePojo.getName(), googlePojo.getEmail());
-        userService.saveUser(signupRequest);
+        userService.register(signupRequest);
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(1);
         JwtResponse jwtResponse = new JwtResponse(

@@ -1,5 +1,6 @@
 package com.example.learning_english.entity;
 
+import com.example.learning_english.entity.enums.EGroupLevel;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,8 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name ;
-
+    @Enumerated(EnumType.STRING)
+    private EGroupLevel groupLevel;
 
     //Cách 1:
 //    @OneToMany(mappedBy = "group")
