@@ -1,6 +1,8 @@
 package com.example.learning_english.controller;
 
 import com.example.learning_english.dto.Answer.AnswerDto;
+import com.example.learning_english.dto.Answer.ResAnswerDto;
+import com.example.learning_english.dto.Course.ResCourseDto;
 import com.example.learning_english.entity.Answer;
 import com.example.learning_english.entity.Exercise;
 import com.example.learning_english.service.AnswerService;
@@ -29,10 +31,10 @@ public class AnswerController {
     public ModelMapper modelMapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Page<Answer>> findAll(@RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "10") int limit){
-        Page<Answer> answerDtos = answerService.findAll(page,limit);
-        return ResponseEntity.ok(answerDtos);
+    public ResponseEntity<Page<ResAnswerDto>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int limit){
+        Page<ResAnswerDto> resAnswerDtos = answerService.findAll(page,limit).map(answer -> modelMapper.map(answer, ResAnswerDto.class));
+        return ResponseEntity.ok(resAnswerDtos);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -57,8 +59,8 @@ public class AnswerController {
         if (!answerOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND);
         }
-        Answer answer = modelMapper.map(answerOptional.get(),Answer.class);
-        return ResponseEntity.ok(answer);
+        ResAnswerDto resAnswerDto = modelMapper.map(answerOptional.get(),ResAnswerDto.class);
+        return ResponseEntity.ok(resAnswerDto);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")

@@ -94,7 +94,7 @@ public class ApplicationSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        roleService.deleteAll();
+//        roleService.deleteAll();
 //        answerService.deleteAll();
 //        exerciseService.deleteAll();
 //        courseService.deleteAll();
@@ -103,6 +103,6 @@ public class ApplicationSeeder implements CommandLineRunner {
 //        seedExercise();
 //        seedAnswer();
 
-        seedRole();
+//        seedRole();
     }
 }
