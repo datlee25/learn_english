@@ -10,12 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class BlogService {
-    public final BlogRepository blogRepository;
+public class BlogService implements BaseService<Blog>{
+    @Autowired
+    private BlogRepository blogRepository;
 
-    public BlogService(BlogRepository blogRepository) {
-        this.blogRepository = blogRepository;
-    }
 
     public Page<Blog> findAll(int page, int limit){
         PageRequest pageRequest = PageRequest.of(page,limit);

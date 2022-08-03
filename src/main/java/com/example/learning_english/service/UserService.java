@@ -13,8 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -30,24 +34,25 @@ public class UserService {
         Pageable pageable = PageRequest.of(page,limit);
         return userRepository.findAll(pageable);
     }
-    public User saveUser(SignupRequest signupRequest){
+    public User register(SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return null;
         }
 
         String password = "";
+
         // Create new user's account
         if (signupRequest.getPassword() != null){
             password = signupRequest.getPassword();
-
         }
+
+
         User user = new User(signupRequest.getUsername(),
                 passwordEncoder.encode(password),
-                signupRequest.getEmail());
+                signupRequest.getEmail(),false);
+
         user.setCreateAt(LocalDateTime.now());
         user.setUpdateAt(LocalDateTime.now());
-
-
 
         Set<String> strRoles = signupRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -71,8 +76,13 @@ public class UserService {
             });
         }
 
+
         user.setRoles(roles);
         userRepository.save(user);
         return user;
+    }
+
+    public Optional<User> findById(int id){
+        return userRepository.findById(id);
     }
 }

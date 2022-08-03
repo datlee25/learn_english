@@ -1,5 +1,7 @@
 package com.example.learning_english.entity.enums;
 
+import java.math.BigDecimal;
+
 public enum EFieldType {
     DOUBLE{
         public Object parse(String value){return Double.valueOf(value);}
@@ -7,7 +9,10 @@ public enum EFieldType {
     INTEGER{
         public Object parse(String value){return Integer.valueOf(value);}
     },
-    String{
+    DECIMAL{
+        public Object parse(String value){return BigDecimal.valueOf(Long.parseLong(value));}
+    },
+    STRING{
         public Object parse(String value){return value;}
     };
 
