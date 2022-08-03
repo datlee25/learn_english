@@ -81,12 +81,12 @@ public class ApplicationSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        answerService.deleteAll();
-        exerciseService.deleteAll();
-        courseService.deleteAll();
-
-        seedCourse();
-        seedExercise();
-        seedAnswer();
+//        answerService.deleteAll();
+//        exerciseService.deleteAll();
+//        courseService.deleteAll();
+//
+//        seedCourse();
+//        seedExercise();
+//        seedAnswer();
     }
 }
