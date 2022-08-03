@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "hello")
+@RequestMapping(path = "/hello")
 public class WelcomeController {
 
     @RequestMapping(method = RequestMethod.GET)
