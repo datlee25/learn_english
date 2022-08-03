@@ -3,10 +3,13 @@ package com.example.learning_english.seeder;
 import com.example.learning_english.entity.Answer;
 import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.Exercise;
+import com.example.learning_english.entity.Role;
 import com.example.learning_english.entity.enums.EAnswerKey;
+import com.example.learning_english.entity.enums.ERole;
 import com.example.learning_english.service.AnswerService;
 import com.example.learning_english.service.CourseService;
 import com.example.learning_english.service.ExerciseService;
+import com.example.learning_english.service.RoleService;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,6 +28,9 @@ public class ApplicationSeeder implements CommandLineRunner {
     private AnswerService answerService;
     @Autowired
     private ExerciseService exerciseService;
+
+    @Autowired
+    private RoleService roleService;
 
 
 
@@ -79,8 +85,16 @@ public class ApplicationSeeder implements CommandLineRunner {
         exerciseService.saveAll(exerciseList);
     }
 
+    public void seedRole(){
+        Role user_role = new Role(ERole.ROLE_USER);
+        Role admin_role = new Role(ERole.ROLE_ADMIN);
+        roleService.save(user_role);
+        roleService.save(admin_role);
+    }
+
     @Override
     public void run(String... args) throws Exception {
+        roleService.deleteAll();
 //        answerService.deleteAll();
 //        exerciseService.deleteAll();
 //        courseService.deleteAll();
@@ -88,5 +102,7 @@ public class ApplicationSeeder implements CommandLineRunner {
 //        seedCourse();
 //        seedExercise();
 //        seedAnswer();
+
+        seedRole();
     }
 }
