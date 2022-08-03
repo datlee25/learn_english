@@ -1,12 +1,12 @@
 package com.example.learning_english.controller;
 
-import com.example.learning_english.dto.ExerciseDto;
+import com.example.learning_english.dto.Course.ResCourseDto;
+import com.example.learning_english.dto.Exercise.ResExerciseDto;
+import com.example.learning_english.dto.Exercise.ExerciseDto;
 import com.example.learning_english.entity.Course;
-import com.example.learning_english.entity.Exercise;
 import com.example.learning_english.entity.Exercise;
 import com.example.learning_english.service.ExerciseService;
 import com.example.learning_english.service.CourseService;
-import com.example.learning_english.service.ExerciseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,10 +31,10 @@ public class ExerciseController {
     public ModelMapper modelMapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Page<Exercise>> findAll(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int limit){
-        Page<Exercise> exerciseDto = exerciseService.findAll(page,limit);
-        return ResponseEntity.ok(exerciseDto);
+    public ResponseEntity<Page<ResExerciseDto>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int limit){
+        Page<ResExerciseDto> resExerciseDtos = exerciseService.findAll(page,limit).map(exercise -> modelMapper.map(exercise,ResExerciseDto.class));
+        return ResponseEntity.ok(resExerciseDtos);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -60,8 +60,8 @@ public class ExerciseController {
         if (!exerciseOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND);
         }
-        Exercise exercise = modelMapper.map(exerciseOptional.get(),Exercise.class);
-        return ResponseEntity.ok(exercise);
+        ResCourseDto resCourseDto = modelMapper.map(exerciseOptional.get(),ResCourseDto.class);
+        return ResponseEntity.ok(resCourseDto);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
