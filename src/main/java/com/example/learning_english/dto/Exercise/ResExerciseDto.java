@@ -1,12 +1,16 @@
 package com.example.learning_english.dto.Exercise;
 
 import com.example.learning_english.entity.Answer;
+import com.example.learning_english.entity.Question;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
 public class ResExerciseDto {
-    private String question;
-    private Set<Answer> answer;
+    private String name;
+    private String description;
+    private List<Question> questions;
+
 }

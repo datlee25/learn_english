@@ -13,7 +13,7 @@ import com.example.learning_english.security.jwt.JwtUtils;
 import com.example.learning_english.security.services.RefreshTokenService;
 import com.example.learning_english.security.services.UserDetailsImpl;
 import com.example.learning_english.service.UserService;
-import com.example.learning_english.util.GoogleUtils;
+import com.example.learning_english.ultils.GoogleUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;

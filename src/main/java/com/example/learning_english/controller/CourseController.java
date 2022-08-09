@@ -2,9 +2,13 @@ package com.example.learning_english.controller;
 
 import com.example.learning_english.dto.Course.CourseDto;
 import com.example.learning_english.dto.Course.ResCourseDto;
+import com.example.learning_english.dto.Exercise.ExerciseDto;
+import com.example.learning_english.dto.Exercise.ResExerciseDto;
 import com.example.learning_english.entity.Course;
+import com.example.learning_english.entity.Exercise;
 import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.service.CourseService;
+import com.example.learning_english.service.ExerciseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,8 +20,8 @@ import javax.validation.Valid;
 
 import java.util.Optional;
 
-import static com.example.learning_english.util.ExceptionMessage.ACTION_SUCCESS;
-import static com.example.learning_english.util.ExceptionMessage.NOT_FOUND;
+import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
+import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
 
 @RestController
 @RequestMapping(path = "api/v1/course")
@@ -27,6 +31,10 @@ public class CourseController {
     public ModelMapper modelMapper;
     @Autowired
     public CourseService courseService;
+
+    @Autowired
+    private ExerciseService exerciseService;
+
     private String errorMessage;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -90,4 +98,17 @@ public class CourseController {
         return courseService.search(searchRequest);
     }
 
+    @RequestMapping(method = RequestMethod.POST,path = "/{id}/exercise")
+    public ResponseEntity<?> addExerciseToCourse(@PathVariable int id, @RequestBody ExerciseDto exerciseDto){
+        Course course = courseService.findById(id).orElseThrow(()-> new RuntimeException("Course Not Found!"));
+        return ResponseEntity.ok(exerciseService.save(course,exerciseDto));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{course_id}/exercise/{exercise_id}")
+    public ResponseEntity<?> findExerciseOfCourse(@PathVariable int course_id, @PathVariable int exercise_id){
+        courseService.findById(course_id).orElseThrow(()->new RuntimeException("Course not found!"));
+        Exercise exercise = exerciseService.findById(exercise_id).orElseThrow(()->new RuntimeException("Exercise not found!"));
+
+        return ResponseEntity.ok(modelMapper.map(exercise, ResExerciseDto.class));
+    }
 }

@@ -2,6 +2,8 @@ package com.example.learning_english.controller;
 
 import com.example.learning_english.dto.Group.GroupDto;
 import com.example.learning_english.dto.Group.ResGroupDto;
+import com.example.learning_english.dto.GroupMember.ResGroupMemberDto;
+import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.entity.Group;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.service.GroupService;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static com.example.learning_english.util.ExceptionMessage.ACTION_SUCCESS;
-import static com.example.learning_english.util.ExceptionMessage.NOT_FOUND;
+import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
+import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
+import static com.example.learning_english.ultils.FormatDateTime.formatDateTime;
 
 @RestController
 @RequestMapping("/api/v1/groups")
@@ -29,12 +33,14 @@ public class GroupController {
     @Autowired
     private UserService userService;
 
-    private ModelMapper modelMapper;
+    @Autowired
+    public ModelMapper modelMapper;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<ResGroupDto>> findAll(@RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "10") int limit){
-        Page<ResGroupDto> resGroupDtos =  groupService.findAll(page, limit).map(group -> modelMapper.map(group,ResGroupDto.class));
+
+        Page<ResGroupDto> resGroupDtos = groupService.findAll(page, limit);
 
         return ResponseEntity.ok(resGroupDtos);
     }

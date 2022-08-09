@@ -18,8 +18,8 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.example.learning_english.util.ExceptionMessage.ACTION_SUCCESS;
-import static com.example.learning_english.util.ExceptionMessage.NOT_FOUND;
+import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
+import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
 
 @RestController
 @RequestMapping(path = "/api/v1/user_score")

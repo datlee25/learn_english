@@ -2,6 +2,7 @@ package com.example.learning_english.entity;
 
 import com.example.learning_english.entity.enums.ERole;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int id;
     @Enumerated(EnumType.STRING)
     @Column(length = 20)

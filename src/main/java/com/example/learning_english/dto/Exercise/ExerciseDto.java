@@ -12,9 +12,8 @@ import java.util.Set;
 @Getter
 @Setter
 public class ExerciseDto {
-    @NotBlank(message = "Exercise question title is mandatory")
-    private String question;
-    @NotBlank(message = "Course title is mandatory")
-    private String course_title;
-
+    @NotBlank(message = "Exercise name is mandatory")
+    private String name;
+    @NotBlank(message = "Exercise description is mandatory")
+    private String description;
 }

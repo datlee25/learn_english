@@ -2,10 +2,8 @@ package com.example.learning_english.entity;
 
 import com.example.learning_english.entity.enums.EAnswerKey;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,11 +12,13 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "answer")
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int id;
 
     @Column(nullable = false)
@@ -30,8 +30,10 @@ public class Answer {
 
     private boolean correct_answer;
 
+    private int question_id;
+
     @ManyToOne(cascade = CascadeType.MERGE)
     @JsonBackReference
-    @JoinColumn(name = "exercise_id")
-    private Exercise exercise;
+    @JoinColumn(name = "question_id", updatable = false, insertable = false)
+    private Question question;
 }

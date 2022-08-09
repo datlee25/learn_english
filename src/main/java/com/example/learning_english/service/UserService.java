@@ -18,6 +18,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,6 +34,9 @@ public class UserService {
     public Page<User> getAll(int page, int limit){
         Pageable pageable = PageRequest.of(page,limit);
         return userRepository.findAll(pageable);
+    }
+    public List<User> getAll(){
+        return userRepository.findAll();
     }
     public User register(SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {

@@ -1,11 +1,13 @@
 package com.example.learning_english.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,8 +20,10 @@ import java.util.Set;
 public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int id;
-    private String question;
+    private String name;
+    private String description;
 
     private int course_id;
 
@@ -30,5 +34,6 @@ public class Exercise {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "exercise")
-    private Set<Answer> answer;
+    private List<Question> questions;
+
 }

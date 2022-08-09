@@ -1,6 +1,7 @@
 package com.example.learning_english.entity;
 
 import com.example.learning_english.dto.CourseDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int id;
 
     @Column(nullable = false)
@@ -39,5 +41,8 @@ public class Course {
 
     private double stars_rated;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "course")
+    private List<Exercise> exercises;
 }
 

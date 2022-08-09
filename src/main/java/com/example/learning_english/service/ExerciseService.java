@@ -1,7 +1,12 @@
 package com.example.learning_english.service;
 
+import com.example.learning_english.dto.Exercise.ExerciseDto;
+import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.Exercise;
+import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.repository.ExerciseRepository;
+import com.example.learning_english.specifications.SearchSpecification;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +19,8 @@ import java.util.Optional;
 public class ExerciseService {
     @Autowired
     public ExerciseRepository exerciseRepository;
-
+    @Autowired
+    public ModelMapper modelMapper;
     public List<Exercise> findAll(){
         return exerciseRepository.findAll();
     }
@@ -27,11 +33,11 @@ public class ExerciseService {
     public Optional<Exercise> findById(int id){
         return exerciseRepository.findById(id);
     }
-    public Optional<Exercise> findByQuestion(String question){
-        return exerciseRepository.findByQuestion(question);
-    }
 
-    public Exercise save(Exercise exercise){
+    public Exercise save(Course course, ExerciseDto exerciseDto){
+        Exercise exercise = modelMapper.map(exerciseDto,Exercise.class);
+        exercise.setCourse_id(course.getId());
+        exercise.setCourse(course);
         return exerciseRepository.save(exercise);
     }
 
@@ -45,5 +51,10 @@ public class ExerciseService {
 
     public void deleteAll(){
         exerciseRepository.deleteAll();
+    }
+    public Page<Exercise> search(SearchRequest searchRequest){
+        SearchSpecification<Exercise> specification = new SearchSpecification<>(searchRequest);
+        PageRequest pageRequest = PageRequest.of(searchRequest.getPage(), searchRequest.getLimit());
+        return exerciseRepository.findAll(specification,pageRequest);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AnswerService {
@@ -28,7 +29,7 @@ public class AnswerService {
     public Answer save(Answer answer){
         return answerRepository.save(answer);
     }
-    public List<Answer> saveAll(List<Answer> answerList){
+    public List<Answer> saveAll(Set<Answer> answerList){
         return answerRepository.saveAll(answerList);
     }
 

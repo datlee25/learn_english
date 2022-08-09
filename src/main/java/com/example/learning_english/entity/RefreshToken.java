@@ -1,5 +1,6 @@
 package com.example.learning_english.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.time.Instant;
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int id;
     private int userId;
     @OneToOne

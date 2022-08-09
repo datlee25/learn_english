@@ -51,39 +51,39 @@ public class ApplicationSeeder implements CommandLineRunner {
         courseService.saveAll(courseList);
     }
 
-    public void seedAnswer(){
-        List<Answer> answerList = new ArrayList<>();
-        List<Exercise> exerciseList = exerciseService.findAll();
-
-        for (int i = 0;i<exerciseList.size();i++){
-            for (EAnswerKey answerKey : EAnswerKey.values()){
-                Answer answer = new Answer();
-                answer.setAnswer_key(answerKey);
-                answer.setAnswer_value(faker.lorem().sentence());
-                answer.setCorrect_answer(i % 3 == 0);
-                answer.setExercise(exerciseList.get(i));
-                answerList.add(answer);
-            }
-        }
-        answerService.saveAll(answerList);
-    }
-
-    public void seedExercise(){
-        List<Exercise> exerciseList = new ArrayList<>();
-        List<Course> courseList = courseService.findAll();
-
-        for (Course value : courseList) {
-            int numberOfExercise = faker.number().numberBetween(1, 5);
-            for (int j = 0; j < numberOfExercise; j++) {
-                Exercise exercise = new Exercise();
-                exercise.setQuestion(faker.name().title());
-                exercise.setCourse(value);
-                exercise.setCourse_id(value.getId());
-                exerciseList.add(exercise);
-            }
-        }
-        exerciseService.saveAll(exerciseList);
-    }
+//    public void seedAnswer(){
+//        List<Answer> answerList = new ArrayList<>();
+//        List<Exercise> exerciseList = exerciseService.findAll();
+//
+//        for (int i = 0;i<exerciseList.size();i++){
+//            for (EAnswerKey answerKey : EAnswerKey.values()){
+//                Answer answer = new Answer();
+//                answer.setAnswer_key(answerKey);
+//                answer.setAnswer_value(faker.lorem().sentence());
+//                answer.setCorrect_answer(i % 3 == 0);
+//                answer.setExercise(exerciseList.get(i));
+//                answerList.add(answer);
+//            }
+//        }
+//        answerService.saveAll(answerList);
+//    }
+//
+//    public void seedExercise(){
+//        List<Exercise> exerciseList = new ArrayList<>();
+//        List<Course> courseList = courseService.findAll();
+//
+//        for (Course value : courseList) {
+//            int numberOfExercise = faker.number().numberBetween(1, 5);
+//            for (int j = 0; j < numberOfExercise; j++) {
+//                Exercise exercise = new Exercise();
+//                exercise.setQuestion(faker.name().title());
+//                exercise.setCourse(value);
+//                exercise.setCourse_id(value.getId());
+//                exerciseList.add(exercise);
+//            }
+//        }
+//        exerciseService.saveAll(exerciseList);
+//    }
 
     public void seedRole(){
         Role user_role = new Role(ERole.ROLE_USER);
