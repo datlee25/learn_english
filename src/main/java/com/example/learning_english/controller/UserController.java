@@ -1,5 +1,6 @@
 package com.example.learning_english.controller;
 
+import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.service.UserService;
@@ -8,12 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +45,12 @@ public class UserController {
             countOccurrences(map,dateTime);
         }
         return map;
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "/{id}/groups")
+    public ResponseEntity<List<ResGroupByUserIdDto>> getGroupByUserId(@PathVariable int id){
+        userService.findById(id).orElseThrow(()-> new RuntimeException("User not found!"));
+        return ResponseEntity.ok( userService.findGroupByUserId(id));
     }
 
     public static void countOccurrences(Map<String, Integer> map, String dateTime){

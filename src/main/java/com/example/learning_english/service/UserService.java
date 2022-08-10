@@ -1,11 +1,16 @@
 package com.example.learning_english.service;
 
+import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
+import com.example.learning_english.entity.GroupMember;
 import com.example.learning_english.entity.Role;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.entity.enums.ERole;
 import com.example.learning_english.payload.request.SignupRequest;
+import com.example.learning_english.repository.GroupMemberRepository;
+import com.example.learning_english.repository.GroupRepository;
 import com.example.learning_english.repository.RoleRepository;
 import com.example.learning_english.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,14 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
+import static com.example.learning_english.ultils.FormatDateTime.formatDateTime;
 
 @Service
 public class UserService {
@@ -30,6 +31,16 @@ public class UserService {
     public RoleRepository roleRepository;
     @Autowired
     public PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public GroupRepository groupRepository;
+
+    @Autowired
+    public ModelMapper modelMapper;
+
+    @Autowired
+    public GroupMemberRepository groupMemberRepository;
+
 
     public Page<User> getAll(int page, int limit){
         Pageable pageable = PageRequest.of(page,limit);
@@ -88,5 +99,19 @@ public class UserService {
 
     public Optional<User> findById(int id){
         return userRepository.findById(id);
+    }
+    public List<ResGroupByUserIdDto> findGroupByUserId(int id){
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMembersByUserId(id);
+        List<ResGroupByUserIdDto> groups = new ArrayList<>();
+        for (GroupMember groupMember :
+                groupMembers) {
+            //TODO: Get group via groupMember and convert to ResGroupByUserIdDto
+            ResGroupByUserIdDto resGroupByUserIdDto = modelMapper.map(groupMember.getGroup(), ResGroupByUserIdDto.class);
+            resGroupByUserIdDto.setCreateAt(formatDateTime(groupMember.getCreateAt()));
+            resGroupByUserIdDto.setUpdateAt(formatDateTime(groupMember.getUpdateAt()));
+            groups.add(resGroupByUserIdDto);
+        }
+
+        return groups;
     }
 }

@@ -98,9 +98,9 @@ public class CourseController {
         return courseService.search(searchRequest);
     }
 
-    @RequestMapping(method = RequestMethod.POST,path = "/{id}/exercise")
-    public ResponseEntity<?> addExerciseToCourse(@PathVariable int id, @RequestBody ExerciseDto exerciseDto){
-        Course course = courseService.findById(id).orElseThrow(()-> new RuntimeException("Course Not Found!"));
+    @RequestMapping(method = RequestMethod.POST,path = "/new/exercise")
+    public ResponseEntity<?> addExerciseToCourse( @RequestBody ExerciseDto exerciseDto){
+        Course course = courseService.findById(exerciseDto.getCourse_id()).orElseThrow(()-> new RuntimeException("Course Not Found!"));
         return ResponseEntity.ok(exerciseService.save(course,exerciseDto));
     }
 
