@@ -50,9 +50,6 @@ public class UserService {
         return userRepository.findAll();
     }
     public User register(SignupRequest signupRequest) {
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return null;
-        }
 
         String password = "";
 
@@ -113,5 +110,9 @@ public class UserService {
         }
 
         return groups;
+    }
+
+    public boolean verificationUserEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 }

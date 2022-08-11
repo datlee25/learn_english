@@ -36,8 +36,11 @@ public class ExerciseService {
 
     public Exercise save(Course course, ExerciseDto exerciseDto){
         Exercise exercise = modelMapper.map(exerciseDto,Exercise.class);
-        exercise.setCourse_id(course.getId());
         exercise.setCourse(course);
+        return exerciseRepository.save(exercise);
+    }
+
+    public Exercise update(Exercise exercise){
         return exerciseRepository.save(exercise);
     }
 

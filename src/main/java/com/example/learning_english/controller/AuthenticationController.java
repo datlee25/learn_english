@@ -17,6 +17,7 @@ import com.example.learning_english.ultils.GoogleUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,6 +80,9 @@ public class AuthenticationController {
 
     @RequestMapping(path = "register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@Valid @RequestBody SignupRequest signupRequest) {
+        if (userService.verificationUserEmail(signupRequest.getEmail())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already in use!");
+        }
         User user = userService.register(signupRequest);
         return ResponseEntity.ok(user);
     }

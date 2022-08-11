@@ -1,12 +1,16 @@
 package com.example.learning_english.controller;
 
-import com.example.learning_english.dto.Course.ResCourseDto;
-import com.example.learning_english.dto.Exercise.ResExerciseDto;
 import com.example.learning_english.dto.Exercise.ExerciseDto;
+import com.example.learning_english.dto.Exercise.ResExerciseDto;
+import com.example.learning_english.dto.QuestionDto.QuestionDto;
+import com.example.learning_english.entity.Answer;
 import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.Exercise;
+import com.example.learning_english.entity.Question;
+import com.example.learning_english.service.AnswerService;
 import com.example.learning_english.service.ExerciseService;
 import com.example.learning_english.service.CourseService;
+import com.example.learning_english.service.QuestionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,10 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
-import static com.example.learning_english.util.ExceptionMessage.ACTION_SUCCESS;
-import static com.example.learning_english.util.ExceptionMessage.NOT_FOUND;
+import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
+import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
 
 @RestController
 @RequestMapping(path = "api/v1/exercise")
@@ -27,6 +33,12 @@ public class ExerciseController {
     public CourseService courseService;
     @Autowired
     public ExerciseService exerciseService;
+
+    @Autowired
+    public QuestionService questionService;
+
+    @Autowired
+    public AnswerService answerService;
     @Autowired
     public ModelMapper modelMapper;
 
@@ -37,31 +49,12 @@ public class ExerciseController {
         return ResponseEntity.ok(resExerciseDtos);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> save(@Valid @RequestBody ExerciseDto exerciseDto){
-        Optional<Course> courseOptional = courseService.finByTitle(exerciseDto.getCourse_title());
-
-        if (!courseOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Exercise Not Found");
-        }
-
-        Course course = courseOptional.get();
-        Exercise exercise = modelMapper.map(exerciseDto,Exercise.class);
-        exercise.setCourse(course);
-        exercise.setCourse_id(course.getId());
-        exerciseService.save(exercise);
-
-        return ResponseEntity.ok(exerciseDto);
-    }
-
     @RequestMapping(method = RequestMethod.GET,path = "/{id}")
     public ResponseEntity<?> findById(@PathVariable int id){
-        Optional<Exercise> exerciseOptional = exerciseService.findById(id);
-        if (!exerciseOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND);
-        }
-        ResCourseDto resCourseDto = modelMapper.map(exerciseOptional.get(),ResCourseDto.class);
-        return ResponseEntity.ok(resCourseDto);
+        Exercise exercise = exerciseService.findById(id).orElseThrow(()->new RuntimeException("Exercise Not Found!"));
+
+        ResExerciseDto resExerciseDto = modelMapper.map(exercise,ResExerciseDto.class);
+        return ResponseEntity.ok(resExerciseDto);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
@@ -72,18 +65,19 @@ public class ExerciseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND);
         }
 
-        Optional<Course> courseOptional = courseService.finByTitle(exerciseDto.getCourse_title());
+        Course course = courseService.findById(exerciseDto.getCourse_id()).orElseThrow(()->new RuntimeException("Exercise Not Found"));
 
-        if (!courseOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Exercise Not Found");
+        Exercise exercise = exerciseOptional.get();
+
+        exercise.setCourse_id(exerciseDto.getCourse_id());
+        exercise.setName(exerciseDto.getName());
+        exercise.setCourse(course);
+        exercise.setDescription(exerciseDto.getDescription());
+
+        if (exerciseDto.getQuestions() != null){
+            exercise.setQuestions(exerciseDto.getQuestions());
         }
-
-        Course course = courseOptional.get();
-        Exercise exitExercise = exerciseOptional.get();
-        exitExercise.setCourse(course);
-        exitExercise.setQuestion(exitExercise.getQuestion());
-
-        return ResponseEntity.ok(exerciseService.save(exitExercise));
+        return ResponseEntity.ok(exerciseService.update(exercise));
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
@@ -95,5 +89,24 @@ public class ExerciseController {
         }
         exerciseService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(ACTION_SUCCESS);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/{id}/question")
+    public ResponseEntity<?> addQuestionToExercise(@PathVariable int id, @RequestBody QuestionDto questionDto){
+
+        Exercise exercise = exerciseService.findById(id).orElseThrow(()->new RuntimeException("Exercise not found!"));
+        Question question = new Question(questionDto.getQuestion(), exercise.getId(),exercise);
+        Question res = questionService.save(question);
+
+        Set<Answer> answerSet = new HashSet<>();
+        for (Answer answer :
+                questionDto.getAnswers()) {
+            answer.setQuestion(res);
+            answer.setQuestion_id(res.getId());
+            answerSet.add(answer);
+        }
+
+        answerService.saveAll(answerSet);
+        return ResponseEntity.ok(answerSet);
     }
 }
