@@ -12,7 +12,5 @@ public class AnswerDto {
     private EAnswerKey answer_key;
     @NotBlank(message = "Answer value is mandatory")
     private String answer_value;
-    @NotBlank(message = "Exercise question is mandatory")
-    private String exercise_question;
     private boolean correct_answer;
 }

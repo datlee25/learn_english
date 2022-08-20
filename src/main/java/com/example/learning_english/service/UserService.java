@@ -12,6 +12,7 @@ import com.example.learning_english.repository.RoleRepository;
 import com.example.learning_english.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.example.learning_english.ultils.FormatDateTime.formatDateTime;
 
@@ -40,7 +42,6 @@ public class UserService {
 
     @Autowired
     public GroupMemberRepository groupMemberRepository;
-
 
     public Page<User> getAll(int page, int limit){
         Pageable pageable = PageRequest.of(page,limit);
@@ -114,5 +115,9 @@ public class UserService {
 
     public boolean verificationUserEmail(String email){
         return userRepository.existsByEmail(email);
+    }
+
+    public boolean patternMatches(String email, String regexPattern){
+        return Pattern.compile(regexPattern).matcher(email).matches();
     }
 }

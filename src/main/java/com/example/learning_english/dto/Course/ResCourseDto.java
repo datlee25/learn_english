@@ -14,5 +14,4 @@ public class ResCourseDto {
     public int participantAge;
     public double qualification;
     public int number_of_participants;
-    private List<Exercise> exercises;
 }

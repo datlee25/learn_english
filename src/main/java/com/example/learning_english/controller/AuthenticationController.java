@@ -17,6 +17,7 @@ import com.example.learning_english.ultils.GoogleUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,8 +56,15 @@ public class AuthenticationController {
     @Autowired
     private GoogleUtils googleUtils;
 
+    @Autowired
+    private Environment env;
+
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        if (!userService.patternMatches(loginRequest.getEmail(),env.getProperty("english.app.regexPattern"))){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is invalid");
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -80,6 +88,9 @@ public class AuthenticationController {
 
     @RequestMapping(path = "register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@Valid @RequestBody SignupRequest signupRequest) {
+        if (!userService.patternMatches(signupRequest.getEmail(),env.getProperty("english.app.regexPattern"))){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is invalid");
+        }
         if (userService.verificationUserEmail(signupRequest.getEmail())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already in use!");
         }
@@ -141,4 +152,5 @@ public class AuthenticationController {
                 roles);
         return ResponseEntity.ok(jwtResponse);
     }
+
 }

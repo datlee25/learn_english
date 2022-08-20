@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -74,10 +75,7 @@ public class ExerciseController {
         exercise.setCourse(course);
         exercise.setDescription(exerciseDto.getDescription());
 
-        if (exerciseDto.getQuestions() != null){
-            exercise.setQuestions(exerciseDto.getQuestions());
-        }
-        return ResponseEntity.ok(exerciseService.update(exercise));
+         return ResponseEntity.ok(exerciseService.update(exercise));
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")

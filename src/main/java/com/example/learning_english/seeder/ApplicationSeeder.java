@@ -1,25 +1,22 @@
 package com.example.learning_english.seeder;
 
-import com.example.learning_english.entity.Answer;
-import com.example.learning_english.entity.Course;
-import com.example.learning_english.entity.Exercise;
-import com.example.learning_english.entity.Role;
+import com.example.learning_english.entity.*;
 import com.example.learning_english.entity.enums.EAnswerKey;
 import com.example.learning_english.entity.enums.ERole;
-import com.example.learning_english.service.AnswerService;
-import com.example.learning_english.service.CourseService;
-import com.example.learning_english.service.ExerciseService;
-import com.example.learning_english.service.RoleService;
+import com.example.learning_english.service.*;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Component
-public class ApplicationSeeder implements CommandLineRunner {
+public class  ApplicationSeeder implements CommandLineRunner {
     private final Faker faker = new Faker();
     @Autowired
     private CourseService courseService;
@@ -31,6 +28,9 @@ public class ApplicationSeeder implements CommandLineRunner {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private QuestionService questionService;
 
 
 
@@ -51,39 +51,61 @@ public class ApplicationSeeder implements CommandLineRunner {
         courseService.saveAll(courseList);
     }
 
-//    public void seedAnswer(){
-//        List<Answer> answerList = new ArrayList<>();
-//        List<Exercise> exerciseList = exerciseService.findAll();
-//
-//        for (int i = 0;i<exerciseList.size();i++){
-//            for (EAnswerKey answerKey : EAnswerKey.values()){
-//                Answer answer = new Answer();
-//                answer.setAnswer_key(answerKey);
-//                answer.setAnswer_value(faker.lorem().sentence());
-//                answer.setCorrect_answer(i % 3 == 0);
-//                answer.setExercise(exerciseList.get(i));
-//                answerList.add(answer);
-//            }
-//        }
-//        answerService.saveAll(answerList);
-//    }
-//
-//    public void seedExercise(){
-//        List<Exercise> exerciseList = new ArrayList<>();
-//        List<Course> courseList = courseService.findAll();
-//
-//        for (Course value : courseList) {
-//            int numberOfExercise = faker.number().numberBetween(1, 5);
-//            for (int j = 0; j < numberOfExercise; j++) {
-//                Exercise exercise = new Exercise();
-//                exercise.setQuestion(faker.name().title());
-//                exercise.setCourse(value);
-//                exercise.setCourse_id(value.getId());
-//                exerciseList.add(exercise);
-//            }
-//        }
-//        exerciseService.saveAll(exerciseList);
-//    }
+    public void seedQuestion(){
+        List<Exercise> exerciseList = exerciseService.findAll();
+        List<Question> questionList = new ArrayList<>();
+        int numberSeed = 50;
+
+        for (Exercise value: exerciseList){
+            for (int i = 0; i <= numberSeed; i++){
+                Question question = new Question();
+                question.setQuestion(faker.name().title());
+                question.setExercise_id(value.getId());
+                question.setExercise(value);
+                questionList.add(question);
+            }
+        }
+
+        questionService.saveAll(questionList);
+
+    }
+
+    public void seedAnswer(){
+        List<Answer> answerList = new ArrayList<>();
+        List<Question> questionList = questionService.findAll();
+
+        for (Question value: questionList){
+            for (EAnswerKey answerKey : EAnswerKey.values()){
+                Answer answer = new Answer();
+                answer.setAnswer_key(answerKey);
+                answer.setAnswer_value(faker.lorem().sentence());
+                answer.setCorrect_answer(new Random().nextBoolean());
+                answer.setQuestion_id(value.getId());
+                answer.setQuestion(value);
+                answerList.add(answer);
+            }
+        }
+        answerService.saveAll(new HashSet<>(answerList));
+    }
+
+    public void seedExercise(){
+        List<Exercise> exerciseList = new ArrayList<>();
+        List<Course> courseList = courseService.findAll();
+
+        for (Course value : courseList) {
+            int numberOfExercise = faker.number().numberBetween(1, 5);
+
+            for (int i = 0; i < numberOfExercise; i++) {
+                Exercise exercise = new Exercise();
+                exercise.setCourse(value);
+                exercise.setName(faker.name().title());
+                exercise.setDescription(faker.lorem().sentence());
+                exercise.setCourse_id(value.getId());
+                exerciseList.add(exercise);
+            }
+        }
+        exerciseService.saveAll(exerciseList);
+    }
 
     public void seedRole(){
         Role user_role = new Role(ERole.ROLE_USER);
@@ -96,11 +118,13 @@ public class ApplicationSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
 //        roleService.deleteAll();
 //        answerService.deleteAll();
+//        questionService.deleteAll();
 //        exerciseService.deleteAll();
 //        courseService.deleteAll();
 //
 //        seedCourse();
 //        seedExercise();
+//        seedQuestion();
 //        seedAnswer();
 
 //        seedRole();
