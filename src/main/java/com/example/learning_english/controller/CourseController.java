@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
 import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
@@ -104,11 +106,12 @@ public class CourseController {
         return ResponseEntity.ok(exerciseService.save(course,exerciseDto));
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/{course_id}/exercise/{exercise_id}")
-    public ResponseEntity<?> findExerciseOfCourse(@PathVariable int course_id, @PathVariable int exercise_id){
+    @RequestMapping(method = RequestMethod.GET, path = "/{course_id}/exercise")
+    public ResponseEntity<?> findExercisesOfCourse(@PathVariable int course_id){
         courseService.findById(course_id).orElseThrow(()->new RuntimeException("Course not found!"));
-        Exercise exercise = exerciseService.findById(exercise_id).orElseThrow(()->new RuntimeException("Exercise not found!"));
-
-        return ResponseEntity.ok(modelMapper.map(exercise, ResExerciseDto.class));
+        List<ResExerciseDto> resExerciseDtos = exerciseService.findExercisesByCourseId(course_id).stream()
+                .map(exercise->modelMapper.map(exercise, ResExerciseDto.class)).collect(Collectors.toList());
+        return ResponseEntity.ok(resExerciseDtos);
     }
+
 }

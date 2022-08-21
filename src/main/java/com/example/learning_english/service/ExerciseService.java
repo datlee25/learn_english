@@ -33,6 +33,9 @@ public class ExerciseService {
     public Optional<Exercise> findById(int id){
         return exerciseRepository.findById(id);
     }
+    public List<Exercise> findExercisesByCourseId(int id){
+        return exerciseRepository.findExercisesByCourse_id(id);
+    }
 
     public Exercise save(Course course, ExerciseDto exerciseDto){
         Exercise exercise = modelMapper.map(exerciseDto,Exercise.class);
