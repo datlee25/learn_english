@@ -16,6 +16,7 @@ import java.util.Set;
 
 @Data
 public class ResGroupDto {
+    private int id;
     private String name;
     @Enumerated(EnumType.STRING)
     private EGroupLevel groupLevel;

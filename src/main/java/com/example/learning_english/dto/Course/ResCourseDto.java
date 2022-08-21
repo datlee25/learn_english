@@ -8,6 +8,7 @@ import java.util.Set;
 
 @Data
 public class ResCourseDto {
+    private int id;
     public String title;
     public String detail;
     public String image;
