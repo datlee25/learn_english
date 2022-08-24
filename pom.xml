@@ -134,6 +134,20 @@
         </dependency>
         <!-- ============================================================ -->
 
+        <!-- Bộ thư viện gửi mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <!-- ============================================================ -->
+
+        <!-- Bộ thư viện thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <!-- ============================================================ -->
+
     </dependencies>
 
 

@@ -4,12 +4,11 @@ import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.entity.GroupMember;
 import com.example.learning_english.entity.Role;
 import com.example.learning_english.entity.User;
+import com.example.learning_english.entity.VerificationCode;
 import com.example.learning_english.entity.enums.ERole;
 import com.example.learning_english.payload.request.SignupRequest;
-import com.example.learning_english.repository.GroupMemberRepository;
-import com.example.learning_english.repository.GroupRepository;
-import com.example.learning_english.repository.RoleRepository;
-import com.example.learning_english.repository.UserRepository;
+import com.example.learning_english.repository.*;
+import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -19,11 +18,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.example.learning_english.ultils.FormatDateTime.formatDateTime;
+import static com.example.learning_english.ultils.RandomVerificationCode.randomVerificationCode;
 
 @Service
 public class UserService {
@@ -38,10 +39,15 @@ public class UserService {
     public GroupRepository groupRepository;
 
     @Autowired
+    private VerificationCodeRepository verifiCodeRepository;
+    @Autowired
     public ModelMapper modelMapper;
 
     @Autowired
     public GroupMemberRepository groupMemberRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public Page<User> getAll(int page, int limit){
         Pageable pageable = PageRequest.of(page,limit);
@@ -50,7 +56,7 @@ public class UserService {
     public List<User> getAll(){
         return userRepository.findAll();
     }
-    public User register(SignupRequest signupRequest) {
+    public User register(SignupRequest signupRequest) throws MessagingException {
 
         String password = "";
 
@@ -92,11 +98,27 @@ public class UserService {
 
         user.setRoles(roles);
         userRepository.save(user);
+        //send verification code
+        String code = randomVerificationCode();
+        VerificationCode verificationCode = new VerificationCode(code,user);
+        verifiCodeRepository.save(verificationCode);
+        emailService.sendMail(user.getEmail(),code);
         return user;
     }
 
     public Optional<User> findById(int id){
         return userRepository.findById(id);
+    }
+
+    public void confirmEmail(String code){
+        System.out.println(code);
+        VerificationCode verificationCode = verifiCodeRepository.findByCode(code);
+        System.out.println(verificationCode.getCode());
+        if(verificationCode != null){
+             User user = userRepository.findById(verificationCode.getUser_id()).orElseThrow(()-> new RuntimeException("User not found!"));
+             user.setEnabled(true);
+             userRepository.save(user);
+         };
     }
     public List<ResGroupByUserIdDto> findGroupByUserId(int id){
         List<GroupMember> groupMembers = groupMemberRepository.findGroupMembersByUserId(id);

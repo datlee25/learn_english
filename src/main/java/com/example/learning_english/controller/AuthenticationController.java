@@ -12,6 +12,7 @@ import com.example.learning_english.payload.response.TokenRefreshResponse;
 import com.example.learning_english.security.jwt.JwtUtils;
 import com.example.learning_english.security.services.RefreshTokenService;
 import com.example.learning_english.security.services.UserDetailsImpl;
+import com.example.learning_english.service.EmailService;
 import com.example.learning_english.service.UserService;
 import com.example.learning_english.ultils.GoogleUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -47,6 +49,7 @@ public class AuthenticationController {
     JwtUtils jwtUtils;
     @Autowired
     UserService userService;
+
     @Autowired
     RefreshTokenService refreshTokenService;
 
@@ -87,7 +90,7 @@ public class AuthenticationController {
     }
 
     @RequestMapping(path = "register", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody SignupRequest signupRequest) throws MessagingException {
         if (!userService.patternMatches(signupRequest.getEmail(),env.getProperty("english.app.regexPattern"))){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is invalid");
         }
@@ -121,8 +124,14 @@ public class AuthenticationController {
                         "Refresh token is not in database!"));
     }
 
+    @RequestMapping(path = "/confirm/email/{code}")
+    public ResponseEntity<?> confirmEmail(@PathVariable String code){
+        userService.confirmEmail(code);
+        return ResponseEntity.ok("Confirm email success!");
+    }
+
     @RequestMapping(path = "/login-google")
-    public ResponseEntity<?> loginGoogle(HttpServletRequest request) throws ClientProtocolException, IOException {
+    public ResponseEntity<?> loginGoogle(HttpServletRequest request) throws ClientProtocolException, IOException, MessagingException {
         String code = request.getParameter("code");
 
         String accessToken = googleUtils.getToken(code);
