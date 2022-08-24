@@ -3,6 +3,7 @@ package com.example.learning_english.controller;
 import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.entity.User;
+import com.example.learning_english.service.EmailService;
 import com.example.learning_english.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,7 +31,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<ResUserDto>> getAll(@RequestParam(defaultValue = "0") int page,
-                                            @RequestParam(defaultValue = "10") int limit){
+                                                   @RequestParam(defaultValue = "10") int limit){
         Page<ResUserDto> userDtos = userService.getAll(page,limit).map(user -> modelMapper.map(user,ResUserDto.class));
         return ResponseEntity.ok(userDtos);
     }
