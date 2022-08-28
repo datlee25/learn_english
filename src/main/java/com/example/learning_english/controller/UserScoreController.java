@@ -36,6 +36,8 @@ public class UserScoreController {
     @Autowired
     private ExerciseService exerciseService;
 
+
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<UserScore>> findAll(
             @RequestParam(defaultValue = "0") int page,
@@ -54,13 +56,13 @@ public class UserScoreController {
         User user = userService.findById(userScoreDto.getUserId()).orElseThrow(()-> new RuntimeException("User not found!"));
         Exercise exercise = exerciseService.findById(userScoreDto.getExerciseId()).orElseThrow(()-> new RuntimeException("Exercise not found!"));
 
+        //TODO: CREATE composite key for userscore
         UserScoreId userScoreId = new UserScoreId(user.getId(),exercise.getId());
         UserScore userScore = new UserScore(userScoreId,userScoreDto.getName(),userScoreDto.getScore(),user,exercise);
 
         UserScore res = userScoreService.save(userScore);
-        ResUserScoreDto resUserScoreDto = modelMapper.map(res, ResUserScoreDto.class);
 
-        return ResponseEntity.ok(resUserScoreDto);
+        return ResponseEntity.ok(modelMapper.map(res, ResUserScoreDto.class));
     }
 
     @RequestMapping(method = RequestMethod.PUT, path="/{id}")
