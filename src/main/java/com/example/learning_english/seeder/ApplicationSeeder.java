@@ -36,7 +36,7 @@ public class  ApplicationSeeder implements CommandLineRunner {
 
     private void seedCourse(){
         List<Course> courseList = new ArrayList<>();
-        int numberOfCourse = 50;
+        int numberOfCourse = 15;
         for (int i = 0; i< numberOfCourse; i++){
             Course course = new Course();
             course.setTitle(faker.name().title());
@@ -44,7 +44,6 @@ public class  ApplicationSeeder implements CommandLineRunner {
             course.setImage(faker.avatar().image());
             course.setParticipantAge(faker.number().numberBetween(5,30));
             course.setQualification(faker.number().numberBetween(1,10));
-            course.setNumber_of_participants(faker.number().numberBetween(100,200));
             course.setStars_rated(faker.number().numberBetween(1,5));
             courseList.add(course);
         }
@@ -54,7 +53,7 @@ public class  ApplicationSeeder implements CommandLineRunner {
     public void seedQuestion(){
         List<Exercise> exerciseList = exerciseService.findAll();
         List<Question> questionList = new ArrayList<>();
-        int numberSeed = 50;
+        int numberSeed = 15;
 
         for (Exercise value: exerciseList){
             for (int i = 0; i <= numberSeed; i++){
@@ -126,7 +125,7 @@ public class  ApplicationSeeder implements CommandLineRunner {
 //        seedExercise();
 //        seedQuestion();
 //        seedAnswer();
-
+//
 //        seedRole();
     }
 }
