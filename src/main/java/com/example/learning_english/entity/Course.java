@@ -1,16 +1,12 @@
 package com.example.learning_english.entity;
 
-import com.example.learning_english.dto.CourseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.StaticMetamodel;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,7 +33,8 @@ public class Course {
 
     private double qualification;
 
-    private int number_of_participants;
+    @Column(nullable = true)
+    private int numberParticipants;
 
     private double stars_rated;
 
