@@ -14,5 +14,6 @@ public class ResCourseDto {
     public String image;
     public int participantAge;
     public double qualification;
-    public int number_of_participants;
+    public int numberParticipants;
+    public int percentageComplete;
 }

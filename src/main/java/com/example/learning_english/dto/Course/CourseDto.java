@@ -13,7 +13,7 @@ public class CourseDto {
     public String image;
     public int participantAge;
     public double qualification;
-    public int number_of_participants;
+    public int numberParticipants;
 
     public Set<String> exercises;
 
