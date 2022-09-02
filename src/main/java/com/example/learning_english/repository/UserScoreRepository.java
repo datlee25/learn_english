@@ -13,9 +13,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserScoreRepository extends JpaRepository<UserScore,Integer>, JpaSpecificationExecutor<UserScore> {
     Page<UserScore> findAll(Pageable pageable);
+    Optional<UserScore> findUserScoreByUserId(int id);
+    List<UserScore> findAll();
+
     List<UserScore> findByUserId(int userId);
 }
