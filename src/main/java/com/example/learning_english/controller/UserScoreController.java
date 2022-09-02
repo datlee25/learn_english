@@ -1,5 +1,6 @@
 package com.example.learning_english.controller;
 
+import com.example.learning_english.dto.UserScore.ResScoreBoard;
 import com.example.learning_english.dto.UserScore.ResUserScoreDto;
 import com.example.learning_english.dto.UserScore.UserScoreDto;
 import com.example.learning_english.entity.*;
@@ -15,7 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
@@ -38,18 +42,16 @@ public class UserScoreController {
 
 
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Page<UserScore>> findAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int limit){
-        return  ResponseEntity.ok(userScoreService.findAll(page, limit));
+    @RequestMapping(method = RequestMethod.GET,path = "/{id}")
+    public ResponseEntity<ResScoreBoard> findAll(@PathVariable int id){
+        return  ResponseEntity.ok(userScoreService.findTop10ByOrderByScoreDesc(id));
     }
 
-    @RequestMapping(method = RequestMethod.GET, path="/{id}")
-    public ResponseEntity<?> findById(@PathVariable int id){
-        UserScore userScore = userScoreService.findById(id).orElseThrow(()-> new RuntimeException("User not found!"));;
-        return ResponseEntity.ok(userScore);
-    }
+//    @RequestMapping(method = RequestMethod.GET, path="/{id}")
+//    public ResponseEntity<?> findById(@PathVariable int id){
+//        UserScore userScore = userScoreService.findById(id).orElseThrow(()-> new RuntimeException("User not found!"));;
+//        return ResponseEntity.ok(userScore);
+//    }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<ResUserScoreDto> save(@Valid @RequestBody UserScoreDto userScoreDto){
