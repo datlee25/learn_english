@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -54,7 +55,7 @@ public class UserScoreService implements BaseService<UserScore> {
         }
 
         top10User.keySet().retainAll(targetKeyset);
-        return new ResScoreBoard(top10User,currentUserScore);
+        return convertTreeMapToModel(top10User,currentUserScore);
     }
 
 
@@ -115,6 +116,20 @@ public class UserScoreService implements BaseService<UserScore> {
     public List<UserScore> findByUserId(int userId) {
         return userScoreRepository.findByUserId(userId);
     }
+
+    private static ResScoreBoard convertTreeMapToModel(Map<String,BigDecimal> top10User, Map<String,BigDecimal> currentUser){
+        List<ResUserScoreDto> listTop10UserScore = new ArrayList<>();
+
+        for (Map.Entry<String, BigDecimal> userInTop10 :
+                top10User.entrySet()
+        ){
+            listTop10UserScore.add(new ResUserScoreDto(userInTop10.getKey(),userInTop10.getValue()));
+        }
+
+        ResUserScoreDto resCurrentUserScore = new ResUserScoreDto(currentUser.keySet().iterator().next(),currentUser.values().iterator().next());
+        return new ResScoreBoard(listTop10UserScore,resCurrentUserScore);
+    }
+
     public static Map<String,BigDecimal> countOccurrences(List<UserScore> userScores){
         Map<String,BigDecimal> map = new TreeMap<>();
         for (UserScore userScore :
