@@ -5,18 +5,18 @@ import com.example.learning_english.dto.UserScore.ResUserScoreDto;
 import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.UserScore;
 import com.example.learning_english.payload.request.search.SearchRequest;
-import com.example.learning_english.repository.CourseRepository;
 import com.example.learning_english.repository.UserScoreRepository;
+
 import com.example.learning_english.specifications.SearchSpecification;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.internal.util.Iterables;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,11 +27,9 @@ public class UserScoreService implements BaseService<UserScore> {
 
     @Autowired
     private UserScoreRepository userScoreRepository;
-    @Autowired
-    private CourseRepository courseRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private Environment env;
 
     @Override
     public Page<UserScore> findAll(int page, int limit) {
@@ -41,21 +39,31 @@ public class UserScoreService implements BaseService<UserScore> {
 
     public ResScoreBoard findTop10ByOrderByScoreDesc(int id){
         List<UserScore> userScores = userScoreRepository.findAll();
+
         Map<String,BigDecimal> currentUserScore = countOccurrences(userScoreRepository.findByUserId(id));
+        Map<String,BigDecimal> rankUser= sortByValues(countOccurrences(userScores));
+        String username = (String) currentUserScore.keySet().toArray()[0];
 
-        Map<String,BigDecimal> top10User= sortByValues(countOccurrences(userScores));
+        //TODO:Get rank of current User
+        int currentUserRank = 0;
+        for (int i = 0; i<rankUser.keySet().size();i++){
+            if (rankUser.keySet().toArray()[i].equals(username)){
+                currentUserRank = i+1;
+            }
+        }
 
-        int numElements = 2;
+        //TODO: Get top 10 user
+        int numElements = Integer.parseInt(Objects.requireNonNull(env.getProperty("english.app.numberOfRank")));
         Set<String> targetKeyset = new HashSet<>();
 
-        for (String key: top10User.keySet()){
+        for (String key: rankUser.keySet()){
             if (numElements<=0){break;}
             targetKeyset.add(key);
             numElements--;
         }
 
-        top10User.keySet().retainAll(targetKeyset);
-        return convertTreeMapToModel(top10User,currentUserScore);
+        rankUser.keySet().retainAll(targetKeyset);
+        return convertTreeMapToModel(rankUser,currentUserScore,currentUserRank);
     }
 
 
@@ -117,16 +125,17 @@ public class UserScoreService implements BaseService<UserScore> {
         return userScoreRepository.findByUserId(userId);
     }
 
-    private static ResScoreBoard convertTreeMapToModel(Map<String,BigDecimal> top10User, Map<String,BigDecimal> currentUser){
+    private static ResScoreBoard convertTreeMapToModel(Map<String,BigDecimal> top10User, Map<String,BigDecimal> currentUser,int currentUserRank){
         List<ResUserScoreDto> listTop10UserScore = new ArrayList<>();
-
+        int rank =0;
         for (Map.Entry<String, BigDecimal> userInTop10 :
                 top10User.entrySet()
         ){
-            listTop10UserScore.add(new ResUserScoreDto(userInTop10.getKey(),userInTop10.getValue()));
+            rank++;
+            listTop10UserScore.add(new ResUserScoreDto(userInTop10.getKey(),userInTop10.getValue(),rank));
         }
 
-        ResUserScoreDto resCurrentUserScore = new ResUserScoreDto(currentUser.keySet().iterator().next(),currentUser.values().iterator().next());
+        ResUserScoreDto resCurrentUserScore = new ResUserScoreDto(currentUser.keySet().iterator().next(),currentUser.values().iterator().next(),currentUserRank );
         return new ResScoreBoard(listTop10UserScore,resCurrentUserScore);
     }
 
