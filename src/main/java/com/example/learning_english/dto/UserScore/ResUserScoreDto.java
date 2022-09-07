@@ -10,4 +10,10 @@ import java.math.BigDecimal;
 public class ResUserScoreDto {
     private String name;
     private BigDecimal score;
+    private int rank;
+
+    public ResUserScoreDto(String name, BigDecimal score) {
+        this.name = name;
+        this.score = score;
+    }
 }
