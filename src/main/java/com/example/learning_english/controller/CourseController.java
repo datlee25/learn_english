@@ -73,7 +73,7 @@ public class CourseController {
         return  ResponseEntity.ok(resCourseDto);
     }
 
-    @RequestMapping(method = RequestMethod.GET,path = "/all")
+    @RequestMapping(method = RequestMethod.GET,path = "/all/pagination")
     public ResponseEntity<Page<ResCourseDto>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
@@ -81,9 +81,13 @@ public class CourseController {
         Page<ResCourseDto> resCourseDtos = courseService.findAll(page,limit).map(course -> modelMapper.map(course,ResCourseDto.class));
 
         return ResponseEntity.ok(resCourseDtos);
-
     }
+    @RequestMapping(method = RequestMethod.GET,path = "/all")
+    public ResponseEntity<List<ResCourseDto>> findAllNoPage(){
+        List<ResCourseDto> resCourseDtos = courseService.findAll().stream().map(course -> modelMapper.map(course,ResCourseDto.class)).collect(Collectors.toList());
 
+        return ResponseEntity.ok(resCourseDtos);
+    }
     @RequestMapping(method = RequestMethod.GET, path="/{id}")
     public ResponseEntity<?> findById(@PathVariable int id){
         Optional<Course> courseOptional = courseService.findById(id);
