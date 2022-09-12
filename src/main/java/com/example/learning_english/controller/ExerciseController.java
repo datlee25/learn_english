@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
 import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
@@ -106,5 +107,13 @@ public class ExerciseController {
 
         answerService.saveAll(answerSet);
         return ResponseEntity.ok(answerSet);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{exercise_id}/questions")
+    public ResponseEntity<?> findQuestionOfExercises(@PathVariable int exercise_id){
+        exerciseService.findById(exercise_id).orElseThrow(()->new RuntimeException("Exercise not found!"));
+        List<QuestionDto> resExerciseDtos = questionService.findQuestionByExerciseId(exercise_id).stream()
+                .map(question->modelMapper.map(question, QuestionDto.class)).collect(Collectors.toList());
+        return ResponseEntity.ok(resExerciseDtos);
     }
 }
