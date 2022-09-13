@@ -25,8 +25,10 @@ public class QuestionService {
         PageRequest pageRequest = PageRequest.of(page, limit);
         return questionRepository.findAll(pageRequest);
     }
-    public List<Question> findQuestionByExerciseId(int id){
-        return questionRepository.findAllByExercise_idOrderByAnswersAsc(id);
+    public Page<Question> findQuestionByExerciseId(int page, int limit,int id){
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        return questionRepository.findAllByExercise_idOrderByAnswersAsc(pageRequest,id);
     }
 
     public Optional<Question> findById(int id){

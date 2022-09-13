@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, Integer>, JpaSpecificationExecutor<Exercise> {
     Page<Exercise> findAll(Pageable pageable);
-    List<Exercise> findExercisesByCourse_id(int id);
+    Page<Exercise> findExercisesByCourse_id(Pageable pageable,int id);
 }

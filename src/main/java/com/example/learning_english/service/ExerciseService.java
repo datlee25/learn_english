@@ -33,8 +33,9 @@ public class ExerciseService {
     public Optional<Exercise> findById(int id){
         return exerciseRepository.findById(id);
     }
-    public List<Exercise> findExercisesByCourseId(int id){
-        return exerciseRepository.findExercisesByCourse_id(id);
+    public Page<Exercise> findExercisesByCourseId(int page, int limit,int id){
+        PageRequest pageRequest = PageRequest.of(page, limit);
+        return exerciseRepository.findExercisesByCourse_id(pageRequest,id);
     }
 
     public Exercise save(Course course, ExerciseDto exerciseDto){
