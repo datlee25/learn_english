@@ -147,9 +147,11 @@ public class CourseController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{course_id}/exercise")
-    public ResponseEntity<?> findExercisesOfCourse(@PathVariable int course_id){
+    public ResponseEntity<?> findExercisesOfCourse(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int limit,
+                                                   @PathVariable int course_id){
         courseService.findById(course_id).orElseThrow(()->new RuntimeException("Course not found!"));
-        List<ResExerciseDto> resExerciseDtos = exerciseService.findExercisesByCourseId(course_id).stream()
+        List<ResExerciseDto> resExerciseDtos = exerciseService.findExercisesByCourseId(page,limit,course_id).stream()
                 .map(exercise->modelMapper.map(exercise, ResExerciseDto.class)).collect(Collectors.toList());
         return ResponseEntity.ok(resExerciseDtos);
     }

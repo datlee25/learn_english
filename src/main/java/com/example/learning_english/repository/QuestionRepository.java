@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question,Integer> {
     Page<Question> findAll(Pageable pageable);
-    List<Question> findAllByExercise_idOrderByAnswersAsc(int id);
+    Page<Question> findAllByExercise_idOrderByAnswersAsc(Pageable pageable,int id);
 
 }

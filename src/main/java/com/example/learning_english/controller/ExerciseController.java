@@ -110,9 +110,11 @@ public class ExerciseController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{exercise_id}/questions")
-    public ResponseEntity<?> findQuestionOfExercises(@PathVariable int exercise_id){
+    public ResponseEntity<?> findQuestionOfExercises(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int limit,
+                                                     @PathVariable int exercise_id){
         exerciseService.findById(exercise_id).orElseThrow(()->new RuntimeException("Exercise not found!"));
-        List<QuestionDto> resExerciseDtos = questionService.findQuestionByExerciseId(exercise_id).stream()
+        List<QuestionDto> resExerciseDtos = questionService.findQuestionByExerciseId(page,limit,exercise_id).stream()
                 .map(question->modelMapper.map(question, QuestionDto.class)).collect(Collectors.toList());
         return ResponseEntity.ok(resExerciseDtos);
     }
