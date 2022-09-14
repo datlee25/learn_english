@@ -56,6 +56,11 @@ public class UserService {
     public List<User> getAll(){
         return userRepository.findAll();
     }
+
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
     public User register(SignupRequest signupRequest) throws MessagingException {
 
         String password = "";
@@ -109,7 +114,15 @@ public class UserService {
     public Optional<User> findById(int id){
         return userRepository.findById(id);
     }
-
+    public User update(User user) throws MessagingException {
+        userRepository.save(user);
+        //send verification code
+        String code = randomVerificationCode();
+        VerificationCode verificationCode = new VerificationCode(code,user);
+        verifiCodeRepository.save(verificationCode);
+        emailService.sendMail(user.getEmail(),code);
+        return user;
+    }
     public void confirmEmail(String code){
         System.out.println(code);
         VerificationCode verificationCode = verifiCodeRepository.findByCode(code);
