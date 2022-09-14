@@ -2,6 +2,7 @@ package com.example.learning_english.controller;
 
 import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.dto.User.ResUserDto;
+import com.example.learning_english.dto.User.UserDto;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.service.EmailService;
 import com.example.learning_english.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,6 +36,18 @@ public class UserController {
                                                    @RequestParam(defaultValue = "10") int limit){
         Page<ResUserDto> userDtos = userService.getAll(page,limit).map(user -> modelMapper.map(user,ResUserDto.class));
         return ResponseEntity.ok(userDtos);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    public ResponseEntity<User> updateUser(@RequestParam String email,@RequestBody UserDto userDto) throws MessagingException {
+        User user = userService.findByEmail(email).orElseThrow(()->new RuntimeException("User not found!"));
+        user.setUpdateAt(LocalDateTime.now());
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(user.getPassword());
+        user.setQualification(userDto.getQualification());
+        user.setEnabled(false);
+        return ResponseEntity.ok(userService.update(user));
     }
 
     @RequestMapping(method = RequestMethod.GET,path = "/report")
