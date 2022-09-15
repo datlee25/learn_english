@@ -54,17 +54,17 @@ public class UserScoreController {
 //    }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<ResUserScoreDto> save(@Valid @RequestBody UserScoreDto userScoreDto){
+    public ResponseEntity<UserScore> save(@Valid @RequestBody UserScoreDto userScoreDto){
         User user = userService.findById(userScoreDto.getUserId()).orElseThrow(()-> new RuntimeException("User not found!"));
         Exercise exercise = exerciseService.findById(userScoreDto.getExerciseId()).orElseThrow(()-> new RuntimeException("Exercise not found!"));
 
-        //TODO: CREATE composite key for userscore
+        //TODO: CREATE composite key for userScore
         UserScoreId userScoreId = new UserScoreId(user.getId(),exercise.getId());
         UserScore userScore = new UserScore(userScoreId,userScoreDto.getName(),userScoreDto.getScore(),user,exercise);
 
         UserScore res = userScoreService.save(userScore);
 
-        return ResponseEntity.ok(modelMapper.map(res, ResUserScoreDto.class));
+        return ResponseEntity.ok(res);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path="/{id}")
