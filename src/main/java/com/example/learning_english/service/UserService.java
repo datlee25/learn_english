@@ -115,6 +115,7 @@ public class UserService {
         return userRepository.findById(id);
     }
     public User update(User user) throws MessagingException {
+        user.setPassword(passwordEncoder.encode(user.password));
         userRepository.save(user);
         //send verification code
         String code = randomVerificationCode();
