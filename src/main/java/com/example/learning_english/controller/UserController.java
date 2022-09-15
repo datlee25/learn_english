@@ -44,7 +44,7 @@ public class UserController {
         user.setUpdateAt(LocalDateTime.now());
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
-        user.setPassword(user.getPassword());
+        user.setPassword(userDto.getPassword());
         user.setQualification(userDto.getQualification());
         user.setEnabled(false);
         return ResponseEntity.ok(userService.update(user));
