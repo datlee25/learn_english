@@ -11,6 +11,7 @@ public class CourseDto {
     public String title;
     public String detail;
     public String image;
+    private int groupsId;
     public int participantAge;
     public double qualification;
     public int numberParticipants;

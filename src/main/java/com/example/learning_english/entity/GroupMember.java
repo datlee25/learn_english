@@ -27,7 +27,6 @@ public class GroupMember extends BaseEntity {
     @MapsId("groupId")
     @JsonBackReference
     private Group group;
-
     @ManyToOne
     @MapsId("userId")
     @JsonBackReference

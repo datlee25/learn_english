@@ -1,12 +1,16 @@
 package com.example.learning_english.controller;
 
+import com.example.learning_english.SearchCriteria.Operator;
 import com.example.learning_english.dto.Course.CourseDto;
+import com.example.learning_english.dto.Course.GetCourseDto;
 import com.example.learning_english.dto.Course.ResCourseDto;
 import com.example.learning_english.dto.Exercise.ExerciseDto;
 import com.example.learning_english.dto.Exercise.ResExerciseDto;
 import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.entity.UserScore;
+import com.example.learning_english.entity.enums.EFieldType;
+import com.example.learning_english.payload.request.search.FilterRequest;
 import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.service.CourseService;
 import com.example.learning_english.service.ExerciseService;
@@ -21,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
@@ -54,10 +55,27 @@ public class CourseController {
     public ResponseEntity<Page<ResCourseDto>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit,
-            @RequestParam int userId){
-        List<UserScore> userScores = userScoreService.findByUserId(userId);
-        Page<ResCourseDto> resCourseDto =  courseService.findAll(page, limit).map(course ->{
-            Map<Integer,Integer> map = new  TreeMap<>();
+            @RequestBody GetCourseDto getCourseDto){
+        List<Object> listGroupId = getCourseDto.getGroupId();
+        listGroupId.add(0);
+        List<FilterRequest> filterRequestList = new ArrayList<>();
+        FilterRequest filterRequest = new FilterRequest();
+        filterRequest.setKey("groupsId");
+        filterRequest.setOperator(Operator.IN);
+        filterRequest.setFieldType(EFieldType.INTEGER);
+        filterRequest.setValues(listGroupId);
+
+        filterRequestList.add(filterRequest);
+
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setFilters(filterRequestList);
+        searchRequest.setPage(page);
+        searchRequest.setLimit(limit);
+        searchRequest.setSorts(new ArrayList<>());
+
+        List<UserScore> userScores = userScoreService.findByUserId(getCourseDto.getUserId());
+        Page<ResCourseDto> resCourseDto = courseService.search(searchRequest).map(course ->{
+            Map<Integer,Integer> map = new TreeMap<>();
 
             for (UserScore userScore: userScores){
                 countOccurrences(map,userScore.getExercise().getCourse_id());
@@ -120,6 +138,7 @@ public class CourseController {
         exitCourse.setDetail(courseDto.getDetail());
         exitCourse.setQualification(courseDto.getQualification());
         exitCourse.setParticipantAge(courseDto.getParticipantAge());
+        exitCourse.setGroupsId(courseDto.getGroupsId());
 
         return ResponseEntity.ok(courseService.save(exitCourse));
     }
