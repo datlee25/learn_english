@@ -2,6 +2,7 @@ package com.example.learning_english.entity;
 
 import com.example.learning_english.entity.base.BaseEntity;
 import com.example.learning_english.entity.enums.EAuthProvider;
+import com.example.learning_english.entity.enums.EGroupLevel;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -27,7 +28,7 @@ public class User extends BaseEntity {
     public String password;
     public String email;
     public String age;
-    public String qualification;
+    public EGroupLevel level;
     @Column(name = "verification_code", length = 64)
     @JsonIgnore
     private String verificationCode;

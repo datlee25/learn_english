@@ -1,8 +1,12 @@
 package com.example.learning_english.dto.User;
 
+import com.example.learning_english.entity.GroupMember;
+import com.example.learning_english.entity.enums.EGroupLevel;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Data
 public class ResUserDto {
@@ -10,9 +14,10 @@ public class ResUserDto {
     private String username;
     private String email;
     private String age;
-    private String qualification;
+    public EGroupLevel level;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private boolean enabled;
+    private List<Integer> groupId;
 
 }

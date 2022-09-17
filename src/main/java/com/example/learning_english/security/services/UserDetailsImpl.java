@@ -19,6 +19,7 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private boolean enabled;
 
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id,
