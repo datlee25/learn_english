@@ -18,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private String password;
     private boolean enabled;
-
+    private List<Integer> groupId;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -27,6 +27,7 @@ public class UserDetailsImpl implements UserDetails {
                            String email,
                            String password,
                            boolean enabled,
+                           List<Integer> groupId,
                            Collection<? extends GrantedAuthority> authorities){
         this.id = id;
         this.username = username;
@@ -34,6 +35,7 @@ public class UserDetailsImpl implements UserDetails {
         this.password = password;
         this.authorities = authorities;
         this.enabled = enabled;
+        this.groupId = groupId;
     }
 
     //TODO: Build a UserDetails
@@ -52,6 +54,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.isEnabled(),
+                user.getGroupMembers().stream().map(groupMember -> groupMember.getGroup().getId()).collect(Collectors.toList()),
                 auth
         );
     }
@@ -96,6 +99,10 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public List<Integer> getGroupId() {
+        return groupId;
     }
 
     @Override

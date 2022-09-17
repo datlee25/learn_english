@@ -37,9 +37,11 @@ public class Course {
     private int numberParticipants;
 
     private double stars_rated;
+    private int groupsId;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "course")
     private List<Exercise> exercises;
+
 }
 

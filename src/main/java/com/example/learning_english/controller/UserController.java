@@ -41,7 +41,7 @@ public class UserController {
                                                    @RequestParam(defaultValue = "10") int limit) {
         Page<ResUserDto> userDtos = userService.getAll(page, limit).map(user -> {
             ResUserDto res =modelMapper.map(user, ResUserDto.class);
-            res.setGroupId(user.getGroupMembers().stream().map(groupMember -> groupMember.getIdOfGroup()).collect(Collectors.toList()));
+            res.setGroupId(user.getGroupMembers().stream().map(groupMember -> groupMember.getGroup().getId()).collect(Collectors.toList()));
             return res;
         });
         return ResponseEntity.ok(userDtos);

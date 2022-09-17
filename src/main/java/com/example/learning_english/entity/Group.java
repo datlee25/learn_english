@@ -1,5 +1,6 @@
 package com.example.learning_english.entity;
 
+import com.example.learning_english.entity.base.BaseEntity;
 import com.example.learning_english.entity.enums.EGroupLevel;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,6 +9,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +20,7 @@ import java.util.Set;
 @Entity
 @ToString
 @Table(name = "groups")
-public class Group {
+public class Group extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -46,4 +48,11 @@ public class Group {
 //    )
 //    private Set<User> users = new HashSet<>();
 
+
+    public Group(LocalDateTime createAt, LocalDateTime updateAt, String name, EGroupLevel groupLevel, BigDecimal price) {
+        super(createAt, updateAt);
+        this.name = name;
+        this.groupLevel = groupLevel;
+        this.price = price;
+    }
 }

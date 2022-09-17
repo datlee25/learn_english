@@ -6,6 +6,7 @@ import com.example.learning_english.dto.GroupMember.ResGroupMemberDto;
 import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.entity.Group;
 import com.example.learning_english.entity.User;
+import com.example.learning_english.entity.enums.EGroupLevel;
 import com.example.learning_english.service.GroupService;
 import com.example.learning_english.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -16,8 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
@@ -93,7 +93,32 @@ public class GroupController {
         User user = userService.findById(userId).orElseThrow(()-> new RuntimeException("Error: User is not found."));
 
         //check độ tuổi.
+        if (user.getLevel().getQualification()<group.getGroupLevel().getQualification() ){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your qualification is not substandard.");
+        }
         ResGroupDto resGroupDto = modelMapper.map(groupService.addUserToGroup(group,user),ResGroupDto.class);
         return ResponseEntity.ok(resGroupDto);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "/report")
+    public Map<String,Integer> reportGroup(){
+        List<Group> groups = groupService.getAll();
+        Map<String,Integer> map = new TreeMap<>();
+
+        for (Group group :
+                groups) {
+            String dateTime = formatDateTime(group.getCreateAt());
+            countOccurrences(map,dateTime);
+        }
+        return map;
+    }
+
+    public static void countOccurrences(Map<String, Integer> map, String dateTime){
+        if (map.containsKey(dateTime)){
+            int count = map.get(dateTime)+1;
+            map.put(dateTime,count);
+        }else{
+            map.put(dateTime,1);
+        }
     }
 }
