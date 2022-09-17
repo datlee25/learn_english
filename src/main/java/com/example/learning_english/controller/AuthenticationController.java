@@ -87,6 +87,7 @@ public class AuthenticationController {
                 refreshToken.getToken(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
+                userDetails.getGroupId(),
                 roles));
     }
 
