@@ -51,7 +51,7 @@ public class CourseController {
 
     private String errorMessage;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.POST,path = "/all")
     public ResponseEntity<Page<ResCourseDto>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit,
