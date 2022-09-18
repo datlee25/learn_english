@@ -20,7 +20,6 @@ import java.util.Set;
 public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private int id;
     private String name;
     private String description;
