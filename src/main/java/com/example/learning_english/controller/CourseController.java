@@ -170,8 +170,7 @@ public class CourseController {
                                                    @RequestParam(defaultValue = "10") int limit,
                                                    @PathVariable int course_id){
         courseService.findById(course_id).orElseThrow(()->new RuntimeException("Course not found!"));
-        List<ResExerciseDto> resExerciseDtos = exerciseService.findExercisesByCourseId(page,limit,course_id).stream()
-                .map(exercise->modelMapper.map(exercise, ResExerciseDto.class)).collect(Collectors.toList());
+        Page<ResExerciseDto> resExerciseDtos = exerciseService.findExercisesByCourseId(page,limit,course_id).map(exercise->modelMapper.map(exercise, ResExerciseDto.class));
         return ResponseEntity.ok(resExerciseDtos);
     }
 

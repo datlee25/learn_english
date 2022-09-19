@@ -114,8 +114,7 @@ public class ExerciseController {
                                                      @RequestParam(defaultValue = "10") int limit,
                                                      @PathVariable int exercise_id){
         exerciseService.findById(exercise_id).orElseThrow(()->new RuntimeException("Exercise not found!"));
-        List<QuestionDto> resExerciseDtos = questionService.findQuestionByExerciseId(page,limit,exercise_id).stream()
-                .map(question->modelMapper.map(question, QuestionDto.class)).collect(Collectors.toList());
+        Page<QuestionDto> resExerciseDtos = questionService.findQuestionByExerciseId(page,limit,exercise_id).map(question->modelMapper.map(question, QuestionDto.class));
         return ResponseEntity.ok(resExerciseDtos);
     }
 }
