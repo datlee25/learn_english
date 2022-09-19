@@ -27,6 +27,7 @@ public class Course {
 
     private String detail;
 
+    @Column(columnDefinition = "TEXT")
     private String image;
 
     private int participantAge;
