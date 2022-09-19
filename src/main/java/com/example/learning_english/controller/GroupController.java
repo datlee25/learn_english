@@ -92,10 +92,6 @@ public class GroupController {
         Group group = groupService.findById(groupId).orElseThrow(()-> new RuntimeException("Error: Group is not found."));
         User user = userService.findById(userId).orElseThrow(()-> new RuntimeException("Error: User is not found."));
 
-        //check độ tuổi.
-        if (user.getLevel().getQualification()<group.getGroupLevel().getQualification() ){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your qualification is not substandard.");
-        }
         ResGroupDto resGroupDto = modelMapper.map(groupService.addUserToGroup(group,user),ResGroupDto.class);
         return ResponseEntity.ok(resGroupDto);
     }
