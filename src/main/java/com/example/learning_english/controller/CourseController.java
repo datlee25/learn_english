@@ -139,7 +139,7 @@ public class CourseController {
         exitCourse.setQualification(courseDto.getQualification());
         exitCourse.setParticipantAge(courseDto.getParticipantAge());
         exitCourse.setGroupsId(courseDto.getGroupsId());
-
+        exitCourse.setImage(courseDto.getImage());
         return ResponseEntity.ok(courseService.save(exitCourse));
     }
 
