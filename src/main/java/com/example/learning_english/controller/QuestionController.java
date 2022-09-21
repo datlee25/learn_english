@@ -3,7 +3,9 @@ package com.example.learning_english.controller;
 import com.example.learning_english.dto.Answer.ResAnswerDto;
 import com.example.learning_english.dto.Exercise.ResExerciseDto;
 import com.example.learning_english.dto.QuestionDto.QuestionDto;
+import com.example.learning_english.entity.Exercise;
 import com.example.learning_english.entity.Question;
+import com.example.learning_english.repository.QuestionRepository;
 import com.example.learning_english.service.AnswerService;
 import com.example.learning_english.service.QuestionService;
 import org.modelmapper.ModelMapper;
@@ -26,6 +28,14 @@ public class QuestionController {
     public ResponseEntity<Page<Question>> findAll(@RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int limit){
         return ResponseEntity.ok(questionService.findAll(page,limit));
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "/{id}")
+    public ResponseEntity<?> findById(@PathVariable int id){
+        Question exercise = questionService.findById(id).orElseThrow(()->new RuntimeException("Question Not Found!"));
+
+        QuestionDto resExerciseDto = modelMapper.map(exercise,QuestionDto.class);
+        return ResponseEntity.ok(resExerciseDto);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")

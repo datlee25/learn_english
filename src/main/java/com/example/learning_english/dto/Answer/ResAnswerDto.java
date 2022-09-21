@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ResAnswerDto {
+    private int id;
     private EAnswerKey answer_key;
     private String answer_value;
     private boolean correct_answer;
