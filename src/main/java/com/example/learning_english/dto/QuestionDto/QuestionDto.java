@@ -7,6 +7,7 @@ import java.util.Set;
 
 @Data
 public class QuestionDto {
+    private int id;
     private String question;
     private Set<Answer> answers;
 
