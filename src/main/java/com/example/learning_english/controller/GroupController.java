@@ -63,6 +63,7 @@ public class GroupController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @Valid @RequestBody GroupDto groupDto){
         Optional<Group> groupOptional = groupService.findById(id);
         if (!groupOptional.isPresent()){

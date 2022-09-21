@@ -60,6 +60,7 @@ public class ExerciseController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @Valid @RequestBody ExerciseDto exerciseDto){
 
         Optional<Exercise> exerciseOptional = exerciseService.findById(id);

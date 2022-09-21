@@ -48,6 +48,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
+    @CrossOrigin(value = "*")
     public ResponseEntity<User> updateUser(@RequestParam String email, @RequestBody UserDto userDto) throws MessagingException {
         User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found!"));
         String neName = userDto.getUsername() == null ? user.getUsername() : userDto.getUsername();

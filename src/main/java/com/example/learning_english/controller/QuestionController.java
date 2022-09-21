@@ -22,6 +22,7 @@ public class QuestionController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody QuestionDto questionDto){
         Question question = questionService.findById(id).orElseThrow(()-> new RuntimeException("Question not found!"));
         question.setQuestion(questionDto.getQuestion());

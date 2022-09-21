@@ -46,6 +46,7 @@ public class AnswerController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @Valid @RequestBody AnswerDto answerDto){
 
         Optional<Answer> answerOptional = answerService.findById(id);

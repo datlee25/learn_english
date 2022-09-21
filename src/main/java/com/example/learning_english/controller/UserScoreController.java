@@ -68,6 +68,7 @@ public class UserScoreController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path="/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @Valid @RequestBody UserScoreDto userScoreDto){
         UserScore userScore = userScoreService.findById(id).orElseThrow(()-> new RuntimeException("User score not found!"));
         User user = userService.findById(userScoreDto.getUserId()).orElseThrow(()-> new RuntimeException("User not found!"));

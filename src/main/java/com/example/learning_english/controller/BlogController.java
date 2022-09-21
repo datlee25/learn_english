@@ -50,6 +50,7 @@ public class BlogController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @Valid @RequestBody BlogDto blogDto){
         Optional<Blog> blogOptional = blogService.findById(id);
         if (!blogOptional.isPresent()){
