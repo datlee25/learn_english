@@ -16,6 +16,7 @@ import com.example.learning_english.service.CourseService;
 import com.example.learning_english.service.ExerciseService;
 import com.example.learning_english.service.UserScoreService;
 import com.example.learning_english.service.UserService;
+import org.apache.commons.codec.binary.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -84,6 +85,8 @@ public class CourseController {
             int percentageComplete = countPercent(map,course.getId(),course.getExercises().size());
             ResCourseDto result = modelMapper.map(course,ResCourseDto.class);
             result.setPercentageComplete(percentageComplete);
+            result.setTitle(StringUtils.newStringUtf8(StringUtils.getBytesUtf8(result.getTitle())));
+            result.setDetail(StringUtils.newStringUtf8(StringUtils.getBytesUtf8(result.getDetail())));
 
             return result;
         });
@@ -96,7 +99,11 @@ public class CourseController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
             ){
-        Page<ResCourseDto> resCourseDtos = courseService.findAll(page,limit).map(course -> modelMapper.map(course,ResCourseDto.class));
+        Page<ResCourseDto> resCourseDtos = courseService.findAll(page,limit).map(course ->{
+            course.setTitle(StringUtils.newStringUtf8(StringUtils.getBytesUtf8(course.getTitle())));
+            course.setDetail(StringUtils.newStringUtf8(StringUtils.getBytesUtf8(course.getDetail())));
+            return modelMapper.map(course,ResCourseDto.class);
+        } );
 
         return ResponseEntity.ok(resCourseDtos);
     }

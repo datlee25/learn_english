@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer,Integer> {
     Page<Answer> findAll(Pageable pageable);
+    Page<Answer> findAllByQuestion_id(Pageable pageable,int id);
 }

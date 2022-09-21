@@ -36,6 +36,10 @@ public class AnswerService {
     public void delete(int id){
         answerRepository.deleteById(id);
     }
+    public Page<Answer> findAnswerByQuestionId(int page, int limit,int questionId){
+        PageRequest pageRequest = PageRequest.of(page, limit);
+        return answerRepository.findAllByQuestion_id(pageRequest,questionId);
+    }
     public void deleteAll(){
         answerRepository.deleteAll();
     }
