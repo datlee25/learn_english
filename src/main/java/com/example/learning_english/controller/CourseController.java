@@ -126,6 +126,7 @@ public class CourseController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path="/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> update(@PathVariable int id, @Valid @RequestBody CourseDto courseDto){
         Optional<Course> courseOptional = courseService.findById(id);
 
