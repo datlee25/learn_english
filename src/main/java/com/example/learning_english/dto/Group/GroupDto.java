@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,4 +14,5 @@ import java.util.Set;
 public class GroupDto {
     private String name;
     private EGroupLevel groupLevel;
+    private BigDecimal price;
 }
