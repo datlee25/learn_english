@@ -10,5 +10,6 @@ public class QuestionDto {
     private int id;
     private String question;
     private Set<Answer> answers;
+    private int exercise_id;
 
 }
