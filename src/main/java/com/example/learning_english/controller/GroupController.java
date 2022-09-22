@@ -71,9 +71,9 @@ public class GroupController {
         }
 
         Group exitGroup = groupOptional.get();
-        exitGroup.setName(groupDto.getName());
-        exitGroup.setGroupLevel(groupDto.getGroupLevel());
-
+        exitGroup.setName(groupDto.getName()==null?groupDto.getName():exitGroup.getName());
+        exitGroup.setGroupLevel(groupDto.getGroupLevel() == null?groupDto.getGroupLevel():exitGroup.getGroupLevel());
+        exitGroup.setPrice(groupDto.getPrice() == null? groupDto.getPrice():exitGroup.getPrice());
         return ResponseEntity.ok(groupService.save(exitGroup));
     }
 
