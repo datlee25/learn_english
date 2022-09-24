@@ -4,6 +4,7 @@ import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.dto.User.UserDto;
 import com.example.learning_english.entity.User;
+import com.example.learning_english.entity.UserScore;
 import com.example.learning_english.entity.enums.EGroupLevel;
 import com.example.learning_english.service.EmailService;
 import com.example.learning_english.service.UserService;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +21,12 @@ import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
+import static com.example.learning_english.ultils.ExceptionMessage.NOT_FOUND;
 import static com.example.learning_english.ultils.FormatDateTime.formatDateTime;
 
 @RestController
@@ -82,7 +87,19 @@ public class UserController {
         userService.findById(id).orElseThrow(() -> new RuntimeException("User not found!"));
         return ResponseEntity.ok(userService.findGroupByUserId(id));
     }
+    @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
+    @CrossOrigin(value = "*")
+    public ResponseEntity<?> delete(@PathVariable int id){
+        Optional<User> userOptional = userService.findById(id);
 
+        if (!userOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND);
+        }
+
+        userService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ACTION_SUCCESS);
+
+    }
     public static void countOccurrences(Map<String, Integer> map, String dateTime) {
         if (map.containsKey(dateTime)) {
             int count = map.get(dateTime) + 1;

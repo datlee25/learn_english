@@ -146,6 +146,9 @@ public class UserService {
 
         return groups;
     }
+    public void delete(int id) {
+        userRepository.deleteById(id);
+    }
 
     public boolean verificationUserEmail(String email){
         return userRepository.existsByEmail(email);
