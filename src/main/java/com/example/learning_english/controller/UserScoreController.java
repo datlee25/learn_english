@@ -85,6 +85,7 @@ public class UserScoreController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> delete(@PathVariable int id){
         Optional<UserScore> userScoreOptional = userScoreService.findById(id);
 

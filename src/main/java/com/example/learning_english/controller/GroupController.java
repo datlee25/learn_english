@@ -78,6 +78,7 @@ public class GroupController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> delete(@PathVariable int id){
         Optional<Group> groupOptional = groupService.findById(id);
 

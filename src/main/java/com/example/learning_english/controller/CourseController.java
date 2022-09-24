@@ -152,6 +152,7 @@ public class CourseController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> delete(@PathVariable int id){
         Optional<Course> courseOptional = courseService.findById(id);
         if (!courseOptional.isPresent()){

@@ -64,6 +64,7 @@ public class AnswerController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
+    @CrossOrigin(value = "*")
     public ResponseEntity<?> delete(@PathVariable int id){
         Optional<Answer> answerOptional = answerService.findById(id);
 
