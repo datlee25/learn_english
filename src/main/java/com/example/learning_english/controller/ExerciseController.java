@@ -68,7 +68,7 @@ public class ExerciseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND);
         }
 
-        Course course = courseService.findById(exerciseDto.getCourse_id()).orElseThrow(()->new RuntimeException("Exercise Not Found"));
+        Course course = courseService.findById(exerciseDto.getCourse_id()).orElseThrow(()->new RuntimeException("Course Not Found"));
 
         Exercise exercise = exerciseOptional.get();
 

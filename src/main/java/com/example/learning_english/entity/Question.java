@@ -23,7 +23,7 @@ public class Question {
     private int exercise_id;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     @ToString.Exclude
     private Set<Answer> answers;
 

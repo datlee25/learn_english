@@ -41,7 +41,7 @@ public class Course {
     private int groupsId;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     private List<Exercise> exercises;
 
 }
