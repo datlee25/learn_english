@@ -26,7 +26,7 @@ public class Exercise {
 
     private int course_id;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "course_id", updatable = false, insertable = false)
     @JsonBackReference
     private Course course;
