@@ -81,7 +81,7 @@ public class ExerciseController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
-    @CrossOrigin(value = "*")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<?> delete(@PathVariable int id){
 
         Optional<Exercise> exerciseOptional = exerciseService.findById(id);
