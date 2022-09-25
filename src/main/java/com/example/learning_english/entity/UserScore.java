@@ -27,7 +27,7 @@ public class UserScore extends BaseEntity {
     @JsonBackReference
     private User user;
 
-    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne
     @MapsId("exerciseId")
     @JsonBackReference
     private Exercise exercise;

@@ -27,7 +27,7 @@ public class VerificationCode {
 
     private int user_id;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.REMOVE,CascadeType.PERSIST})
     @JoinColumn(name = "user_id",updatable = false,insertable = false)
     private User user;
 

@@ -26,7 +26,7 @@ public class Exercise {
 
     private int course_id;
 
-    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "course_id", updatable = false, insertable = false)
     @JsonBackReference
     private Course course;
@@ -35,4 +35,7 @@ public class Exercise {
     @OneToMany(mappedBy = "exercise",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     private List<Question> questions;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "exercise",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
+    private List<UserScore> userScores;
 }

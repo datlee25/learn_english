@@ -31,7 +31,7 @@ public class Group extends BaseEntity {
     private BigDecimal price;
 
     //Cách 1:
-    @OneToMany(mappedBy = "group",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     @JsonManagedReference
     private Set<GroupMember> groupMembers;
 

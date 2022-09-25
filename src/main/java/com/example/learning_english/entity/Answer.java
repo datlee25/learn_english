@@ -31,7 +31,7 @@ public class Answer {
 
     private int question_id;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "question_id", updatable = false, insertable = false)
     private Question question;

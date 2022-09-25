@@ -29,19 +29,17 @@ public class User extends BaseEntity {
     public String email;
     public String age;
     public EGroupLevel level;
-    @Column(name = "verification_code", length = 64)
-    @JsonIgnore
-    private String verificationCode;
+
     private boolean enabled;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     public Set<Role> roles = new HashSet<>();
 
     //Cách 1:
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     @JsonIgnore
     @JsonManagedReference
     private Set<GroupMember> groupMembers;
