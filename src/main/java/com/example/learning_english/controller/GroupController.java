@@ -1,12 +1,15 @@
 package com.example.learning_english.controller;
 
 import com.example.learning_english.dto.Group.GroupDto;
+import com.example.learning_english.dto.Group.ReportGroupDto;
 import com.example.learning_english.dto.Group.ResGroupDto;
 import com.example.learning_english.dto.GroupMember.ResGroupMemberDto;
 import com.example.learning_english.dto.User.ResUserDto;
+import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.Group;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.entity.enums.EGroupLevel;
+import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.service.GroupService;
 import com.example.learning_english.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -96,6 +99,15 @@ public class GroupController {
 
         ResGroupDto resGroupDto = modelMapper.map(groupService.addUserToGroup(group,user),ResGroupDto.class);
         return ResponseEntity.ok(resGroupDto);
+    }
+    @RequestMapping(method = RequestMethod.GET, path = "/report_user")
+    public List<ReportGroupDto> report() {
+        return groupService.report();
+    }
+
+    @RequestMapping(method = RequestMethod.POST,path = "/search")
+    public Page<Course> search (@RequestBody SearchRequest searchRequest){
+        return groupService.search(searchRequest);
     }
 
     @RequestMapping(method = RequestMethod.GET,path = "/report")
