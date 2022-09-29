@@ -1,13 +1,12 @@
 package com.example.learning_english.service;
 
 import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
-import com.example.learning_english.entity.GroupMember;
-import com.example.learning_english.entity.Role;
-import com.example.learning_english.entity.User;
-import com.example.learning_english.entity.VerificationCode;
+import com.example.learning_english.entity.*;
 import com.example.learning_english.entity.enums.ERole;
 import com.example.learning_english.payload.request.SignupRequest;
+import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.repository.*;
+import com.example.learning_english.specifications.SearchSpecification;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +131,12 @@ public class UserService {
              userRepository.save(user);
          };
     }
+    public Page<User> search(SearchRequest searchRequest){
+        SearchSpecification<User> specification = new SearchSpecification<>(searchRequest);
+        PageRequest pageRequest = PageRequest.of(searchRequest.getPage(), searchRequest.getLimit());
+        return userRepository.findAll(specification, pageRequest);
+    }
+
     public List<ResGroupByUserIdDto> findGroupByUserId(int id){
         List<GroupMember> groupMembers = groupMemberRepository.findGroupMembersByUserId(id);
         List<ResGroupByUserIdDto> groups = new ArrayList<>();

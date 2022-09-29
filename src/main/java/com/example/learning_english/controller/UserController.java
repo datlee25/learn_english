@@ -3,9 +3,11 @@ package com.example.learning_english.controller;
 import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.dto.User.UserDto;
+import com.example.learning_english.entity.Course;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.entity.UserScore;
 import com.example.learning_english.entity.enums.EGroupLevel;
+import com.example.learning_english.payload.request.search.SearchRequest;
 import com.example.learning_english.service.EmailService;
 import com.example.learning_english.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +83,12 @@ public class UserController {
         }
         return map;
     }
+
+    @RequestMapping(method = RequestMethod.POST,path = "/search")
+    public Page<User> search (@RequestBody SearchRequest searchRequest){
+        return userService.search(searchRequest);
+    }
+
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}/groups")
     public ResponseEntity<List<ResGroupByUserIdDto>> getGroupByUserId(@PathVariable int id) {
