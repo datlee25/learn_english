@@ -4,13 +4,10 @@ import com.example.learning_english.dto.Group.ResGroupByUserIdDto;
 import com.example.learning_english.dto.User.ResUserDto;
 import com.example.learning_english.dto.User.UserDto;
 import com.example.learning_english.entity.Course;
-import com.example.learning_english.entity.Role;
 import com.example.learning_english.entity.User;
 import com.example.learning_english.entity.UserScore;
 import com.example.learning_english.entity.enums.EGroupLevel;
-import com.example.learning_english.entity.enums.ERole;
 import com.example.learning_english.payload.request.search.SearchRequest;
-import com.example.learning_english.repository.RoleRepository;
 import com.example.learning_english.service.EmailService;
 import com.example.learning_english.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static com.example.learning_english.ultils.ExceptionMessage.ACTION_SUCCESS;
@@ -42,8 +42,7 @@ public class UserController {
     public ModelMapper modelMapper;
     @Autowired
     public PasswordEncoder passwordEncoder;
-    @Autowired
-    public RoleRepository roleRepository;
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<ResUserDto>> getAll(@RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "10") int limit) {
@@ -69,32 +68,6 @@ public class UserController {
         user.setPassword(newPass);
         user.setLevel(newLevel);
         user.setEnabled(false);
-        return ResponseEntity.ok(userService.update(user));
-    }
-
-    @RequestMapping(method = RequestMethod.PUT,path = "/roles")
-    @CrossOrigin(value = "*")
-    public ResponseEntity<User> updateUserRole(@RequestParam String email, @RequestBody Set<String> roles) throws MessagingException {
-        User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found!"));
-        Set<Role> roleSet = new HashSet<>();
-        if (roles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roleSet.add(userRole);
-        } else {
-            roles.forEach(role -> {
-                if ("admin".equals(role)) {
-                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roleSet.add(adminRole);
-                } else {
-                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roleSet.add(userRole);
-                }
-            });
-        }
-        user.setRoles(roleSet);
         return ResponseEntity.ok(userService.update(user));
     }
 
