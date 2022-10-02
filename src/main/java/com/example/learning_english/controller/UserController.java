@@ -72,9 +72,9 @@ public class UserController {
         return ResponseEntity.ok(userService.update(user));
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
-    @CrossOrigin(value = "/roles")
-    public ResponseEntity<User> updateUser(@RequestParam String email, @RequestBody Set<String> roles) throws MessagingException {
+    @RequestMapping(method = RequestMethod.PUT,path = "/roles")
+    @CrossOrigin(value = "*")
+    public ResponseEntity<User> updateUserRole(@RequestParam String email, @RequestBody Set<String> roles) throws MessagingException {
         User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found!"));
         Set<Role> roleSet = new HashSet<>();
         if (roles == null) {
