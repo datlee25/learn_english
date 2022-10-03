@@ -19,11 +19,13 @@ public class EmailService {
     public void sendMail(String email,String code) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         boolean multipart = true;
+        String image = "https://res.cloudinary.com/ledat123/image/upload/v1664763833/englishApp/Pink_Feminine_Thank_You_Card_1_veecdq.png";
         MimeMessageHelper helper = new MimeMessageHelper(message,multipart,"utf-8");
-        String htmlMsg = "<h3>Im testing send a HTML email</h3>";
+        String htmlMsg = "<h3>your account verification " + "code: "+ code +"</h3>" +
+                "<img src="+ "'"+ image +"'"+"/>";
         message.setContent(htmlMsg, "text/html");
         helper.setTo(email);
-        helper.setSubject("Test send HTML email" + "code: "+ code);
+        helper.setSubject("Easy English App");
         javaMailSender.send(message);
     }
 }
